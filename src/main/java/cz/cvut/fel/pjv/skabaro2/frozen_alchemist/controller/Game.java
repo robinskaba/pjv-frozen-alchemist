@@ -1,7 +1,8 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.Controls;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.Direction;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.Direction;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.GameScene;

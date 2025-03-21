@@ -6,7 +6,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Item;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.Direction;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
 
 import java.io.InputStream;

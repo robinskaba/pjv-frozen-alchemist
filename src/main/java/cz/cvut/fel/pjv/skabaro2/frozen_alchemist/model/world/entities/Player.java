@@ -3,7 +3,7 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.Inventory;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.EntityType;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.Direction;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.Direction;
 
 public class Player extends Entity {
     private Direction facingDirection;
