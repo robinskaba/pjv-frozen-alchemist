@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Controls {
     private final Map<String, Boolean> currentlyActiveKeys = new HashMap<>();
-    private final Map<String, Runnable> bindedFunctions = new HashMap<>();
+    private final Map<String, Runnable> boundFunctions = new HashMap<>();
 
     public void keyPressed(String key) {
         if (currentlyActiveKeys.containsKey(key)) return; // prevent holding down key
@@ -19,12 +19,12 @@ public class Controls {
     }
 
     public void bindFunction(String key, Runnable runnable) {
-        if (bindedFunctions.containsKey(key)) return; // dont allow multiple funcs for one key
-        bindedFunctions.put(key, runnable);
+        if (boundFunctions.containsKey(key)) return; // dont allow multiple funcs for one key
+        boundFunctions.put(key, runnable);
     }
 
     private void handleKey(String key) {
-        Runnable func = bindedFunctions.get(key);
+        Runnable func = boundFunctions.get(key);
         if (func != null) func.run();
     }
 }
