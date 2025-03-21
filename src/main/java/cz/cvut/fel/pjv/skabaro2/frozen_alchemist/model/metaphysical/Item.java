@@ -1,6 +1,6 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical;
 
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.ItemType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
 
 // GENERAL ITEM (does not need to exist on the map!!)
 public class Item {

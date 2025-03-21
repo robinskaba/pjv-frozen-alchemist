@@ -1,10 +1,10 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.BlockType;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.EntityType;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.ItemType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.EntityType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.Direction;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
 import javafx.scene.image.Image;
 
 import java.io.InputStream;
@@ -52,9 +52,9 @@ public final class TextureManager {
     }
 
     private static Image getImage(String folder, String fileName) {
-        System.out.println(folder + fileName);
         InputStream stream = TextureManager.class.getResourceAsStream(folder + fileName);
         if (stream == null) stream = TextureManager.class.getResourceAsStream(TEXTURES_FOLDER + "missing_texture.png");
+        assert stream != null; // idea otherwise highlights because even missing texture might be missing
         return new Image(stream);
     }
 

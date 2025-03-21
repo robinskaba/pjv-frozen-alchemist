@@ -1,8 +1,8 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.Inventory;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.EntityType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.EntityType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.Direction;
 
 public class Player extends Entity {

@@ -2,7 +2,7 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller.TextureManager;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
