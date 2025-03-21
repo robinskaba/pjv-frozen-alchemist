@@ -1,8 +1,9 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
+// handles functions and pressed keys - what key are pressed is decided elsewhere
 public class Controls {
     private final Map<String, Boolean> currentlyActiveKeys = new HashMap<>();
     private final Map<String, Runnable> boundFunctions = new HashMap<>();
