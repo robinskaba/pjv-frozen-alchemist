@@ -1,54 +1,47 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view;
 
-import javafx.geometry.Pos;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller.TextureManager;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+
+import java.util.List;
 
 public class GameScene extends Scene {
-    public GameScene(
-        Runnable onPlayButtonClicked,
-        Runnable onResetButtonClicked
-    ) {
-        super(createRoot(onPlayButtonClicked, onResetButtonClicked));
+    private final int widthInTiles = 16;
+    private final int heightInTiles = 9;
+    private final int tileSizeInPixels = 64;
+
+    private static GraphicsContext gc;
+
+    public GameScene() {
+        super(createRoot());
     }
 
-    // workaround because super "has to be first statement in constructor"
-    private static Pane createRoot(Runnable onPlayButtonClicked, Runnable onResetButtonClicked) {
+    public void render(List<Entity> entities) {
+        gc.clearRect(0, 0, Config.getInt("window_width"), Config.getInt("window_height"));
+
+        for (Entity entity : entities) {
+            Image img = TextureManager.getTexture(entity);
+            Position position = entity.getPosition();
+            gc.drawImage(img, position.getX() * tileSizeInPixels, position.getY() * tileSizeInPixels);
+        }
+    }
+
+    private static Pane createRoot() {
+        int windowWidth = Config.getInt("window_width");
+        int windowHeight = Config.getInt("window_height");
+
         Pane root = new Pane();
-
-        int windowWidth = 854;
-        int windowHeight = 480;
-
         Canvas canvas = new Canvas(windowWidth, windowHeight);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc = canvas.getGraphicsContext2D();
 
-        // Load background image and draw it
-        Image background = new Image(GameScene.class.getResourceAsStream("/ui/crafting_overlay.png"));
-        gc.drawImage(background, 0, 0, windowWidth, windowHeight);
-
-        // Buttons
-        Button playButton = new Button("Play Game");
-        Button restartButton = new Button("Restart Progress");
-
-        playButton.setOnAction(e -> onPlayButtonClicked.run());
-        restartButton.setOnAction(e -> onResetButtonClicked.run());
-
-        playButton.setPrefWidth(125);
-        restartButton.setPrefWidth(125);
-
-        // Layout for buttons
-        VBox buttonBox = new VBox(15, playButton, restartButton);
-        buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.setMinWidth(windowWidth);
-        buttonBox.setMinHeight(windowHeight);
-
-        // Add elements to root pane
-        root.getChildren().addAll(canvas, buttonBox);
+        root.getChildren().addAll(canvas);
         return root;
     }
 }

@@ -1,8 +1,13 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data;
 
 public class Position {
-    private int x = 0;
-    private int y = 0;
+    private int x;
+    private int y;
+
+    public Position(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     public void setX(int x) {
         this.x = x;
@@ -19,6 +24,4 @@ public class Position {
     public int getY() {
         return y;
     }
-
-    public Position() {}
 }
