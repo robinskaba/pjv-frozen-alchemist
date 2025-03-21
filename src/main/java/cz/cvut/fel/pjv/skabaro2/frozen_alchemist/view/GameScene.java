@@ -27,9 +27,17 @@ public class GameScene extends Scene {
         gc.clearRect(0, 0, Config.getInt("window_width"), Config.getInt("window_height"));
 
         for (Entity entity : entities) {
-            Image img = TextureManager.getTexture(entity);
+            LoadedImage loadedImage = TextureManager.getLoadedImage(entity);
             Position position = entity.getPosition();
-            gc.drawImage(img, position.getX() * tileSizeInPixels, position.getY() * tileSizeInPixels);
+
+            // calculating offset because some textures are too large
+            double offset = loadedImage.getScale() < 1f ?
+                (tileSizeInPixels - loadedImage.getScale() * tileSizeInPixels) / 2f : 0;
+            double x = position.getX() * tileSizeInPixels + offset;
+            double y = position.getY() * tileSizeInPixels + offset;
+            double size = loadedImage.getScale() * tileSizeInPixels;
+
+            gc.drawImage(loadedImage.getImage(), x, y, size, size);
         }
     }
 
