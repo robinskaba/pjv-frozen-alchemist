@@ -22,8 +22,6 @@ public final class TextureManager {
     private static final Map<ItemType, Image> itemTextures = new HashMap<>();
     private static final Map<Direction, Image> playerVariantTextures = new HashMap<>();
 
-    private static final Map<EntityType, Map> entityTextures = new HashMap<>();
-
     static {
         blockTextures.put(BlockType.RegularIce, getImage(BLOCKS, "regular_ice.png"));
         blockTextures.put(BlockType.MeltableIce, getImage(BLOCKS, "meltable_ice.png"));
