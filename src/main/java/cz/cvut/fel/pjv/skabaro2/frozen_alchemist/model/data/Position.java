@@ -24,4 +24,21 @@ public class Position {
     public int getY() {
         return y;
     }
+
+    public Position getPositionWithDirection(Direction direction) {
+        return switch (direction) {
+            case UP -> new Position(this.x, this.y - 1);
+            case DOWN -> new Position(this.x, this.y + 1);
+            case LEFT -> new Position(this.x - 1, this.y);
+            case RIGHT -> new Position(this.x + 1, this.y);
+        };
+    }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

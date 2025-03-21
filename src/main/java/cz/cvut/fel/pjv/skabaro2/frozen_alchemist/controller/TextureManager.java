@@ -2,7 +2,7 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.Direction;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Direction;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.LoadedImage;
 import javafx.scene.image.Image;
