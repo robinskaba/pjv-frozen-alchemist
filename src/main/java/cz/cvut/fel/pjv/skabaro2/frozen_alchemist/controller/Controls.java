@@ -1,0 +1,30 @@
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Controls {
+    private final Map<String, Boolean> currentlyActiveKeys = new HashMap<>();
+    private final Map<String, Runnable> bindedFunctions = new HashMap<>();
+
+    public void keyPressed(String key) {
+        if (currentlyActiveKeys.containsKey(key)) return; // prevent holding down key
+        currentlyActiveKeys.put(key, true);
+        handleKey(key);
+    }
+
+    public void keyReleased(String key) {
+        if (!currentlyActiveKeys.containsKey(key)) return;
+        currentlyActiveKeys.remove(key);
+    }
+
+    public void bindFunction(String key, Runnable runnable) {
+        if (bindedFunctions.containsKey(key)) return; // dont allow multiple funcs for one key
+        bindedFunctions.put(key, runnable);
+    }
+
+    private void handleKey(String key) {
+        Runnable func = bindedFunctions.get(key);
+        if (func != null) func.run();
+    }
+}

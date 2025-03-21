@@ -1,7 +1,9 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.types.Direction;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.GameMap;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.GameScene;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.MenuScene;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.Screen;
@@ -9,14 +11,15 @@ import javafx.animation.AnimationTimer;
 
 public class Game {
     private Screen screen;
+    private final Player player = new Player(Direction.RIGHT, new Position(0, 0));
     private GameMap gameMap;
     private AnimationTimer gameLoop;
-
-    boolean b = false;
+    private Controls controls;
 
     public Game(Screen screen) {
         this.screen = screen;
-        gameMap = new GameMap();
+        gameMap = new GameMap(player);
+        controls = new Controls();
     }
 
     public void initiate() {
@@ -26,15 +29,24 @@ public class Game {
     }
 
     private void update() {
-        Direction d = b ? Direction.RIGHT : Direction.LEFT;
-        b = !b;
-        gameMap.testPlayerMove(d);
     }
 
     private void playGame() {
         GameScene gameScene = new GameScene();
         screen.setScene(gameScene);
 
+        // pass pressed / released key to Controls
+        gameScene.setOnKeyPressed(e -> {
+            controls.keyPressed(e.getCode().toString());
+        });
+        gameScene.setOnKeyReleased(e -> {
+            controls.keyReleased(e.getCode().toString());
+        });
+
+        controls.bindFunction("W", () -> player.move(Direction.UP));
+        controls.bindFunction("S", () -> player.move(Direction.DOWN));
+        controls.bindFunction("A", () -> player.move(Direction.LEFT));
+        controls.bindFunction("D", () -> player.move(Direction.RIGHT));
 
         gameLoop = new AnimationTimer() {
             @Override
