@@ -1,8 +1,9 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.Controls;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.Controls;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Direction;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.MovementHandler;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.GameScene;
@@ -12,15 +13,10 @@ import javafx.animation.AnimationTimer;
 
 public class Game {
     private Screen screen;
-    private final Player player = new Player(Direction.RIGHT, new Position(0, 0));
-    private GameMap gameMap;
     private AnimationTimer gameLoop;
-    private Controls controls;
 
     public Game(Screen screen) {
         this.screen = screen;
-        gameMap = new GameMap(player);
-        controls = new Controls();
     }
 
     public void initiate() {
@@ -36,6 +32,11 @@ public class Game {
         GameScene gameScene = new GameScene();
         screen.setScene(gameScene);
 
+        Controls controls = new Controls();
+        Player player = new Player(Direction.RIGHT, new Position(0, 0));
+        GameMap gameMap = new GameMap(player);
+        new MovementHandler(gameMap, player, controls);
+
         // pass pressed / released key to Controls
         gameScene.setOnKeyPressed(e -> {
             controls.keyPressed(e.getCode().toString());
@@ -43,11 +44,6 @@ public class Game {
         gameScene.setOnKeyReleased(e -> {
             controls.keyReleased(e.getCode().toString());
         });
-
-        controls.bindFunction("W", () -> movePlayer(Direction.UP));
-        controls.bindFunction("S", () -> movePlayer(Direction.DOWN));
-        controls.bindFunction("A", () -> movePlayer(Direction.LEFT));
-        controls.bindFunction("D", () -> movePlayer(Direction.RIGHT));
 
         gameLoop = new AnimationTimer() {
             @Override
@@ -63,13 +59,5 @@ public class Game {
     private void resetProgress() {
         // TODO reset player progress
         System.out.println("Reset Progress");
-    }
-
-    private void movePlayer(Direction direction) {
-        Position position = player.getPosition().getPositionWithDirection(direction);
-        if (!gameMap.isPositionInMap(position)) return;
-
-        player.setPosition(position);
-        player.setFacingDirection(direction);
     }
 }

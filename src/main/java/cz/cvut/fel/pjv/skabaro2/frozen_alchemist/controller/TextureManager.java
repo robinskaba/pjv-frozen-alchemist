@@ -29,6 +29,7 @@ public final class TextureManager {
         blockTextures.put(BlockType.Chasm, buildImage(BLOCKS, "chasm.png"));
         blockTextures.put(BlockType.Rubble, buildImage(BLOCKS, "rubble.png"));
         blockTextures.put(BlockType.Exit, buildImage(BLOCKS, "exit.png"));
+        blockTextures.put(BlockType.Floor, buildImage(BLOCKS, "floor_ice.png"));
 
         itemTextures.put(ItemType.PotionOfFrost, buildImage(  POTIONS, "potion_of_frost.png"));
         itemTextures.put(ItemType.PotionOfLevitation, buildImage(POTIONS, "potion_of_levitation.png"));

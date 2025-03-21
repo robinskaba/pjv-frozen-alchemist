@@ -2,6 +2,7 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.Inventory;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.EntityType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Direction;
 
@@ -20,6 +21,15 @@ public class Player extends Entity {
     }
 
     public void setFacingDirection(Direction direction) {
+        this.facingDirection = direction;
+    }
+
+    public boolean isLevitating() {
+        return true;
+    }
+
+    public void move(Direction direction) {
+        this.position = this.position.getPositionWithDirection(direction);
         this.facingDirection = direction;
     }
 }

@@ -24,8 +24,8 @@ public class GameMap {
         for (int i = 0; i < widthInTiles; i++) {
             for (int j = 0; j < heightInTiles; j++) {
                 if (i % 2 == 0 && j % 2 == 0) {
-                    entities.add(new Block(BlockType.RegularIce, new Position(i, j)));
-                } else if (i % 2 == 0 && j % 2 == 1) {
+                    entities.add(new Block(BlockType.Floor, new Position(i, j)));
+                } else if (i % 2 == 1 && j % 2 == 1) {
                     entities.add(new Block(BlockType.Rubble, new Position(i, j)));
                 } else if (i % 2 == 0) {
                     entities.add(new Block(BlockType.Chasm, new Position(i, j)));
@@ -45,5 +45,12 @@ public class GameMap {
 
     public boolean isPositionInMap(Position position) {
         return position.getX() >= 0 && position.getX() < widthInTiles && position.getY() >= 0 && position.getY() < heightInTiles;
+    }
+
+    public BlockType getBlockTypeOnPosition(Position position) {
+        for (Entity entity : entities) {
+            if (entity.getPosition().equals(position) && entity.getEntityType().equals(EntityType.BLOCK)) return (BlockType) entity.getSubtype();
+        }
+        return null;
     }
 }
