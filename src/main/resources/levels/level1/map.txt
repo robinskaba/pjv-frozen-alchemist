@@ -4,6 +4,13 @@ W X W W W W W R R R R R I I I I
 X X X X X X X X X X X X I I X X
 X X X X X X X X X X X X I I X X
 X X X X X X X X X E X X I I X X
-X X X X X X X X X X X X I I X X
+X X M M M X X X X X X X I I X X
 X X X X X X X X X X X X I I X X
 I I I I I I I I I I I I I I I I
+%
+POF(1,0)
+G(0,0)
+POM(10,8)
+POL(15,8)
+POP(5,5)
+F(1,1)

@@ -11,33 +11,17 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameMap {
     private final ArrayList<Entity> entities = new ArrayList<>();
 
-    private final MapLoader mapLoader = new MapLoader();
-
     private final int widthInTiles = Config.getInt("width_in_tiles");
     private final int heightInTiles = Config.getInt("height_in_tiles");
 
-    public GameMap(Player player) {
-//        for (int i = 0; i < widthInTiles; i++) {
-//            for (int j = 0; j < heightInTiles; j++) {
-//                if (i % 2 == 0 && j % 2 == 0) {
-//                    entities.add(new Block(BlockType.Floor, new Position(i, j)));
-//                } else if (i % 2 == 1 && j % 2 == 1) {
-//                    entities.add(new Block(BlockType.Rubble, new Position(i, j)));
-//                } else if (i % 2 == 0) {
-//                    entities.add(new Block(BlockType.Chasm, new Position(i, j)));
-//                } else {
-//                    entities.add(new Block(BlockType.Exit, new Position(i, j)));
-//                }
-//            }
-//        }
-//
-//        entities.add(new Item(ItemType.EmberFlower, new Position(2, 4)));
-
-        entities.addAll(mapLoader.buildEntities(1));
+    public GameMap(Player player, Block[] blocks, Item[] items) {
+        entities.addAll(List.of(blocks));
+        entities.addAll(List.of(items));
         entities.add(player);
     }
 

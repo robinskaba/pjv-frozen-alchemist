@@ -3,6 +3,8 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Block;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Item;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
@@ -15,10 +17,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 // creates entities based of txt map file
@@ -29,19 +28,20 @@ public class MapLoader {
     private final Map<String, ItemType> itemSigns = new HashMap<>();
 
     public MapLoader() {
-        System.out.println(getAmountOfLevels());
         setupSigns();
     }
 
     // sets what "characters" represent what block / item
     private void setupSigns() {
-        blockSigns.put('X', BlockType.Floor);
-        blockSigns.put('W', BlockType.Water);
-        blockSigns.put('C', BlockType.Chasm);
-        blockSigns.put('R', BlockType.Rubble);
-        blockSigns.put('E', BlockType.Exit);
-        blockSigns.put('M', BlockType.MeltableIce);
-        blockSigns.put('I', BlockType.RegularIce);
+        EnumSet<BlockType> blockTypes = EnumSet.allOf(BlockType.class);
+        for (BlockType blockType : blockTypes) {
+            blockSigns.put(blockType.getSaveSign(), blockType);
+        }
+
+        EnumSet<ItemType> itemTypes = EnumSet.allOf(ItemType.class);
+        for (ItemType itemType : itemTypes) {
+            itemSigns.put(itemType.getSaveShortcut(), itemType);
+        }
     }
 
     // Lists total amount of "files" == levels in the levels directory
@@ -65,36 +65,105 @@ public class MapLoader {
         }
     }
 
-    public List<Entity> buildEntities(int level) {
-        ArrayList<Entity> entities = new ArrayList<>();
+    private InputStreamReader getLevelReader(int level) throws IOException {
+        InputStream levelStream = Config.class.getResourceAsStream(String.format("%slevel%d/map.txt", LEVELS, level));
+        if (levelStream == null) throw new IOException("Could not find level " + level);
+        return new InputStreamReader(levelStream);
+    }
 
-        InputStream input = Config.class.getResourceAsStream(String.format("%slevel%d/map.txt", LEVELS, level));
-        if (input == null) return entities;
+    private Block[] getBlocks(InputStreamReader reader) throws IOException {
+        ArrayList<Block> blocks = new ArrayList<>();
 
-        try (InputStreamReader reader = new InputStreamReader(input)) {
-            int x = 0, y = 0;
-            while (true) {
-                int sign = reader.read();
-                if (sign == -1) return entities;
-                Character shortcut = (char) sign;
+        int x = 0, y = 0; // for specifying block's position
+        while (true) {
+            int sign = reader.read();
+            // todo better exceptions -> MapLoadingException class
+            if (sign == -1) throw new RuntimeException("Map file should not end before '%' sign is present"); // EOF
 
-                if (blockSigns.containsKey(shortcut)) {
-                    BlockType blockType = blockSigns.get(shortcut);
-                    if (blockType == null) {
-                        System.err.println("Unknown block type: <" + shortcut + ">");
-                        continue;
-                    };
+            Character shortcut = (char) sign;
 
-                    Position position = new Position(x, y);
-                    entities.add(new Block(blockType, position));
-
-                    x++;
-                } else if (shortcut.equals('\n')) {
+            switch (shortcut) {
+                case '%': return blocks.toArray(new Block[blocks.size()]); // end of block declaration
+                case '\n': {
                     y++;
                     x = 0;
+                    break;
+                }
+                case ' ': break;
+                default: {
+                    // Add block based on shortcut read
+                    Position position = new Position(x, y);
+                    BlockType blockType = blockSigns.getOrDefault(shortcut, BlockType.MissingBlock);
+
+                    blocks.add(new Block(blockType, position));
+
+                    x++;
                 }
             }
-        } catch (IOException e) {
+        }
+    }
+
+    private Item[] getItems(InputStreamReader reader) throws IOException {
+        // skip over '\n' after separation char '%'
+        reader.skip(1);
+
+        ArrayList<Item> items = new ArrayList<>();
+
+        StringBuilder buffer = new StringBuilder();
+        String name = null;
+        int x = -1;
+        int y = -1;
+
+        while (true) {
+            int sign = reader.read();
+            if (sign == -1) return items.toArray(new Item[items.size()]); // legit EOF
+            Character readChar = (char) sign;
+
+            switch (readChar) {
+                case '\n': {
+                    // finished reading whole item -> create new item
+                    if (name == null || x == -1 || y == -1 ) {
+                        throw new RuntimeException("Error reading name/x/y of item.");
+                    }
+                    ItemType itemType = itemSigns.get(name);
+                    if (itemType == null) throw new RuntimeException("Read non-existent ItemType: " + name);
+
+                    Item newItem = new Item(itemType, new Position(x, y));
+                    items.add(newItem);
+                    continue;
+                }
+                case '(': {
+                    name = buffer.toString();
+                    buffer.delete(0, buffer.length());
+                    continue;
+                }
+                case ',': {
+                    x = Integer.parseInt(buffer.toString());
+                    buffer.delete(0, buffer.length());
+                    continue;
+                }
+                case ')': {
+                    y = Integer.parseInt(buffer.toString());
+                    buffer.delete(0, buffer.length());
+                    continue;
+                }
+            }
+
+            System.out.println("appending: <" + readChar + ">");
+            buffer.append(readChar);
+            System.out.println("current buffer: <" + buffer.toString() + ">");
+        }
+    }
+
+    // void -> GameMap
+    public GameMap buildMap(int level, Player player) {
+        try {
+            InputStreamReader reader = getLevelReader(level);
+            Block[] blocks = getBlocks(reader);
+            Item[] items = getItems(reader);
+            return new GameMap(player, blocks, items);
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

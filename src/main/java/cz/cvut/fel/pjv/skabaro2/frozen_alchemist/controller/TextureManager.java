@@ -31,6 +31,7 @@ public final class TextureManager {
         blockTextures.put(BlockType.Exit, buildImage(BLOCKS, "exit.png"));
         blockTextures.put(BlockType.Floor, buildImage(BLOCKS, "floor_ice.png"));
         blockTextures.put(BlockType.Water, buildImage(BLOCKS, "water.png"));
+        blockTextures.put(BlockType.MissingBlock, buildImage(BLOCKS, "missing_block.png"));
 
         itemTextures.put(ItemType.PotionOfFrost, buildImage(POTIONS, "potion_of_frost.png"));
         itemTextures.put(ItemType.PotionOfLevitation, buildImage(POTIONS, "potion_of_levitation.png"));
