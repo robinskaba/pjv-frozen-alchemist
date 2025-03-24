@@ -30,8 +30,9 @@ public final class TextureManager {
         blockTextures.put(BlockType.Rubble, buildImage(BLOCKS, "rubble.png"));
         blockTextures.put(BlockType.Exit, buildImage(BLOCKS, "exit.png"));
         blockTextures.put(BlockType.Floor, buildImage(BLOCKS, "floor_ice.png"));
+        blockTextures.put(BlockType.Water, buildImage(BLOCKS, "water.png"));
 
-        itemTextures.put(ItemType.PotionOfFrost, buildImage(  POTIONS, "potion_of_frost.png"));
+        itemTextures.put(ItemType.PotionOfFrost, buildImage(POTIONS, "potion_of_frost.png"));
         itemTextures.put(ItemType.PotionOfLevitation, buildImage(POTIONS, "potion_of_levitation.png"));
         itemTextures.put(ItemType.PotionOfPulverization, buildImage(POTIONS, "potion_of_pulverization.png"));
         itemTextures.put(ItemType.PotionOfMelting, buildImage(POTIONS, "potion_of_melting.png"));

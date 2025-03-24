@@ -23,7 +23,7 @@ public class MovementHandler {
 
     private boolean canMoveTo(BlockType block) {
         return switch (block) {
-            case Rubble, MeltableIce, RegularIce -> false;
+            case Rubble, MeltableIce, RegularIce, Water -> false;
             case Chasm -> player.isLevitating();
             default -> true;
         };

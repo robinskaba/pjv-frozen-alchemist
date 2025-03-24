@@ -5,6 +5,7 @@ public enum BlockType {
     MeltableIce,
     Chasm,
     Rubble,
+    Water,
     Exit,
     Floor
 }
