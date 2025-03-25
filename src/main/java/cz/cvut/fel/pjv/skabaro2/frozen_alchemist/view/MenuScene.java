@@ -27,7 +27,7 @@ public class MenuScene extends Scene {
         Canvas canvas = new Canvas(windowWidth, windowHeight);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        Image background = new Image(MenuScene.class.getResourceAsStream("/ui/menu_background.png"));
+        Image background = new Image(MenuScene.class.getResourceAsStream("/ui/background_w_title.png"));
         gc.drawImage(background, 0, 0, windowWidth, windowHeight);
 
         Button playButton = new Button("Play Game");
