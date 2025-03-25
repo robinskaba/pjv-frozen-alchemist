@@ -5,14 +5,14 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MovementHandler {
-    private final GameMap gameMap;
     private final Player player;
+
+    private GameMap gameMap;
 
     private final Map<BlockType, Runnable> onBlockEnterEvents = new HashMap<>();
 
@@ -33,6 +33,10 @@ public class MovementHandler {
             case Chasm -> player.isLevitating();
             default -> true;
         };
+    }
+
+    public void updateGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
     }
 
     public void onBlockEnter(BlockType blockType, Runnable executedFunc) {

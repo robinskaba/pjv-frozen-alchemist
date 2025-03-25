@@ -3,18 +3,16 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.Inventory;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.InventoryItem;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.EntityType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Direction;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
 
 public class Player extends Entity {
-    private Direction facingDirection;
+    private Direction facingDirection = Direction.RIGHT;
     private final Inventory inventory = new Inventory();
 
-    public Player(Direction startingDirection, Position startingPosition) {
+    public Player(Position startingPosition) {
         super(EntityType.PLAYER, startingPosition);
-        this.facingDirection = startingDirection;
     }
 
     @Override
@@ -28,11 +26,6 @@ public class Player extends Entity {
 
     public boolean isLevitating() {
         return true;
-    }
-
-    public void move(Direction direction) {
-        this.position = this.position.getPositionWithDirection(direction);
-        this.facingDirection = direction;
     }
 
     public void receiveItem(Item item) {

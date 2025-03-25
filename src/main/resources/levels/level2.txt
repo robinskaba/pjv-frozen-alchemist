@@ -1,0 +1,13 @@
+I I I I I I I I I I I I I I I I
+X X X X X X X X X X X X X X X I
+W W W W W W W R X W R R I I X I
+I I I I I I I X X W X X I I X X
+X X R X X C C X X W X X I I X X
+E I I I I I I X X I X X I I X X
+I I I I I X M X X X X X I I X X
+X X X X X X I X X I X X I I X X
+X I I I I I I X I I X X X I I I
+%
+POM(7,3)
+POP(0,8)
+POL(10,8)

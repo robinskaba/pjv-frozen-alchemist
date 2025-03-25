@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 // creates entities based of txt map file
 public class MapLoader {
-    private final String LEVELS = "/levels/";
+    private final String LEVELS = "/levels";
 
     private final Map<Character, BlockType> blockSigns = new HashMap<>();
     private final Map<String, ItemType> itemSigns = new HashMap<>();
@@ -45,7 +45,7 @@ public class MapLoader {
     }
 
     // Lists total amount of "files" == levels in the levels directory
-    private int getAmountOfLevels() {
+    public int getAmountOfLevels() {
         Path levelsPath;
 
         // get path to levels directory in resources
@@ -66,7 +66,7 @@ public class MapLoader {
     }
 
     private InputStreamReader getLevelReader(int level) throws IOException {
-        InputStream levelStream = Config.class.getResourceAsStream(String.format("%slevel%d/map.txt", LEVELS, level));
+        InputStream levelStream = Config.class.getResourceAsStream(String.format("%s/level%d.txt", LEVELS, level));
         if (levelStream == null) throw new IOException("Could not find level " + level);
         return new InputStreamReader(levelStream);
     }
@@ -156,12 +156,12 @@ public class MapLoader {
     }
 
     // void -> GameMap
-    public GameMap buildMap(int level, Player player) {
+    public GameMap buildMap(int level) {
         try {
             InputStreamReader reader = getLevelReader(level);
             Block[] blocks = getBlocks(reader);
             Item[] items = getItems(reader);
-            return new GameMap(player, blocks, items);
+            return new GameMap(blocks, items);
         }
         catch (IOException e) {
             throw new RuntimeException(e);

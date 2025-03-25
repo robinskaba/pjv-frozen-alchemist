@@ -3,5 +3,6 @@
   "window_width": 1038,
   "window_height": 612,
   "width_in_tiles": 16,
-  "height_in_tiles": 9
+  "height_in_tiles": 9,
+  "tile_size_in_pixels": 64
 }
