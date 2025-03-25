@@ -33,10 +33,31 @@ public class GameMap {
         return position.getX() >= 0 && position.getX() < widthInTiles && position.getY() >= 0 && position.getY() < heightInTiles;
     }
 
-    public BlockType getBlockTypeOnPosition(Position position) {
+    private Entity[] getEntitiesOnPosition(Position position) {
+        ArrayList<Entity> entitiesOnPosition = new ArrayList<>();
         for (Entity entity : entities) {
-            if (entity.getPosition().equals(position) && entity.getEntityType().equals(EntityType.BLOCK)) return (BlockType) entity.getSubtype();
+            if (entity.getPosition().equals(position)) entitiesOnPosition.add(entity);
+        }
+        return entitiesOnPosition.toArray(new Entity[entitiesOnPosition.size()]);
+    }
+
+    public Block getBlockOnPosition(Position position) {
+        Entity[] entitiesOnPosition = getEntitiesOnPosition(position);
+        for (Entity entity : entitiesOnPosition) {
+            if (entity.getEntityType().equals(EntityType.BLOCK)) return (Block) entity;
         }
         return null;
+    }
+
+    public Item getItemOnPosition(Position position) {
+        Entity[] entitiesOnPosition = getEntitiesOnPosition(position);
+        for (Entity entity : entitiesOnPosition) {
+            if (entity.getEntityType().equals(EntityType.ITEM)) return (Item) entity;
+        }
+        return null;
+    }
+
+    public void removeItem(Item item) {
+        entities.remove(item);
     }
 }

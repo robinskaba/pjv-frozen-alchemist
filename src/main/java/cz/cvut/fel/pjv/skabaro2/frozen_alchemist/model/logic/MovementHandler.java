@@ -5,10 +5,16 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MovementHandler {
     private final GameMap gameMap;
     private final Player player;
+
+    private final Map<BlockType, Runnable> onBlockEnterEvents = new HashMap<>();
 
     public MovementHandler(GameMap gameMap, Player player, Controls controls) {
         this.gameMap = gameMap;
@@ -29,14 +35,25 @@ public class MovementHandler {
         };
     }
 
+    public void onBlockEnter(BlockType blockType, Runnable executedFunc) {
+        onBlockEnterEvents.put(blockType, executedFunc);
+    }
+
+    private void blockEntered(BlockType blockType) {
+        Runnable assignedFunc = onBlockEnterEvents.get(blockType);
+        if (assignedFunc != null) assignedFunc.run();
+    }
+
     public void movePlayer(Direction direction) {
+        player.setFacingDirection(direction);
+
         Position position = player.getPosition().getPositionWithDirection(direction);
         if (!gameMap.isPositionInMap(position)) return;
 
-        BlockType blockOnPosition = gameMap.getBlockTypeOnPosition(position);
+        BlockType blockOnPosition = (BlockType) gameMap.getBlockOnPosition(position).getSubtype();
         if (!canMoveTo(blockOnPosition)) return;
 
         player.setPosition(position);
-        player.setFacingDirection(direction);
+        blockEntered(blockOnPosition);
     }
 }

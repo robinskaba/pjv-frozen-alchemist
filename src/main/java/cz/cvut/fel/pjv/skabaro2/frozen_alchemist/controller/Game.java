@@ -6,7 +6,9 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Direction;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.MovementHandler;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.MapLoader;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Item;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Player;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.BlockType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.GameScene;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.MenuScene;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.Screen;
@@ -33,11 +35,25 @@ public class Game {
         GameScene gameScene = new GameScene();
         screen.setScene(gameScene);
 
-        Controls controls = new Controls();
-        Player player = new Player(Direction.RIGHT, new Position(0, 0));
+        // independent of level
         MapLoader mapLoader = new MapLoader();
+        Controls controls = new Controls();
+
+        Player player = new Player(Direction.RIGHT, new Position(0, 0));
+
         GameMap gameMap = mapLoader.buildMap(1, player); // gameMap is map of one level
-        new MovementHandler(gameMap, player, controls);
+        MovementHandler movementHandler = new MovementHandler(gameMap, player, controls);
+
+        movementHandler.onBlockEnter(BlockType.Exit, () -> {
+            System.out.println("Exit!!");
+        });
+        movementHandler.onBlockEnter(BlockType.Floor, () -> {
+            // item picking up logic (no connection to view? perhaps in model?)
+            Item itemOnFloor = gameMap.getItemOnPosition(player.getPosition());
+            if (itemOnFloor == null) return;
+            player.receiveItem(itemOnFloor);
+            gameMap.removeItem(itemOnFloor);
+        });
 
         // pass pressed / released key to Controls
         gameScene.setOnKeyPressed(e -> {

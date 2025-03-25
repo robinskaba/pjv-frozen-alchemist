@@ -8,6 +8,7 @@ public class Inventory {
     public void add(InventoryItem inventoryItem) {
         int amount = content.getOrDefault(inventoryItem, 0);
         content.put(inventoryItem, amount + 1);
+        System.out.println("Inventory item " + inventoryItem + " added to the content");
     }
 
     public void remove(InventoryItem inventoryItem, int amount) throws Exception {
