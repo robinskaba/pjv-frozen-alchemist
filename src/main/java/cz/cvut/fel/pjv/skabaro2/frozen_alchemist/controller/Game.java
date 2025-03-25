@@ -21,9 +21,9 @@ public class Game {
     }
 
     public void initiate() {
-        MenuScene menuScene = new MenuScene(this::playGame, this::resetProgress);
-        screen.setScene(menuScene);
-        //playGame(); // testing
+//        MenuScene menuScene = new MenuScene(this::playGame, this::resetProgress);
+//        screen.setScene(menuScene);
+        playGame(); // testing
     }
 
     private void update() {
