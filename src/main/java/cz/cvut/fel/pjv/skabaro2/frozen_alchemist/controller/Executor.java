@@ -25,7 +25,7 @@ public class Executor {
     private void initiate() {
         MenuScene menuScene = new MenuScene(this::playGame, ProgressFileManager::resetFile);
         screen.setScene(menuScene);
-        playGame(); // testing
+        //playGame(); // testing
     }
 
     private void playGame() {

@@ -9,6 +9,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
+import javafx.scene.text.Font;
+
+import java.io.InputStream;
 
 public class MenuScene extends Scene {
     public MenuScene(
@@ -16,6 +19,8 @@ public class MenuScene extends Scene {
         Runnable onResetButtonClicked
     ) {
         super(createRoot(onPlayButtonClicked, onResetButtonClicked));
+
+        getStylesheets().add(getClass().getResource("/styles/menu_scene.css").toExternalForm());
     }
 
     // workaround because super "has to be first statement in constructor"
@@ -27,20 +32,24 @@ public class MenuScene extends Scene {
         Canvas canvas = new Canvas(windowWidth, windowHeight);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        Image background = new Image(MenuScene.class.getResourceAsStream("/ui/background_w_title.png"));
+        InputStream backgroundImageStream = MenuScene.class.getResourceAsStream("/ui/background_w_title.png");
+        if (backgroundImageStream == null) throw new RuntimeException("Background image not found");
+        Image background = new Image(backgroundImageStream);
         gc.drawImage(background, 0, 0, windowWidth, windowHeight);
 
         Button playButton = new Button("Play Game");
         Button restartButton = new Button("Restart Progress");
+
         playButton.setOnAction(e -> onPlayButtonClicked.run());
         restartButton.setOnAction(e -> onResetButtonClicked.run());
-        playButton.setPrefWidth(125);
-        restartButton.setPrefWidth(125);
 
         VBox buttonBox = new VBox(15, playButton, restartButton);
-        buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.setMinWidth(windowWidth);
-        buttonBox.setMinHeight(windowHeight);
+        buttonBox.setAlignment(Pos.CENTER); // Keep buttons centered within the VBox
+        buttonBox.setPrefWidth(windowWidth / 2.0); // Ensures the VBox isn't stretched too wide
+
+        double buttonOffsetY = 250; // Adjust this to move the buttons up
+        buttonBox.setLayoutY(windowHeight - buttonOffsetY);
+        buttonBox.setLayoutX((windowWidth - buttonBox.getPrefWidth()) / 2);
 
         root.getChildren().addAll(canvas, buttonBox);
         return root;
