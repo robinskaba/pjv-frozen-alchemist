@@ -32,8 +32,13 @@ public class Player extends Entity {
         ItemType itemType = (ItemType) item.getSubtype();
         InventoryItem newInventoryItem = new InventoryItem(
             itemType.getName(),
-            itemType.getDescription()
+            itemType.getDescription(),
+            (ItemType) item.getSubtype()
         );
         inventory.add(newInventoryItem);
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 }

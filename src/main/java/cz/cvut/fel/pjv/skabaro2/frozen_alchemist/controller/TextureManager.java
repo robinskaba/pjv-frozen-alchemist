@@ -23,6 +23,9 @@ public final class TextureManager {
     private static final Map<ItemType, Image> itemTextures = new HashMap<>();
     private static final Map<Direction, Image> playerVariantTextures = new HashMap<>();
 
+//    private static final Image missingImage = new Image(TEXTURES_FOLDER + "missing_texture.png");
+    private static final Image missingImage = null;
+
     static {
         blockTextures.put(BlockType.RegularIce, buildImage(BLOCKS, "regular_ice.png"));
         blockTextures.put(BlockType.MeltableIce, buildImage(BLOCKS, "meltable_ice.png"));
@@ -79,9 +82,13 @@ public final class TextureManager {
         }
 
         // default to missing texture if unknown type passed
-        if (img == null) img = new Image(TEXTURES_FOLDER + "missing_texture.png");
+        if (img == null) img = missingImage;
 
         return new LoadedImage(img, scale);
+    }
+
+    public static Image getImage(ItemType itemType) {
+        return itemTextures.getOrDefault(itemType, missingImage);
     }
 }
 

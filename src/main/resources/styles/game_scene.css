@@ -1,0 +1,57 @@
+.main-button {
+    -fx-background-color: transparent;
+}
+
+.menu {
+    -fx-background-color: rgba(0, 0, 0, 0.75);
+    -fx-background-radius: 0.75em;
+    -fx-border-radius: 0.75em;
+    -fx-border-width: 3px;
+    -fx-border-color: rgba(0, 0, 0, 1);
+}
+
+.menu-title {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 2em;
+    -fx-padding: 15px 0 0 0;
+}
+
+.menu-grid {
+    -fx-hgap: 10px;
+    -fx-vgap: 15px;
+    -fx-alignment: center;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.menu-item:pressed {
+    -fx-background-color: white;
+}
+
+.hint-button {
+    -fx-background-color: transparent;
+}
+
+.hint-button:pressed {
+    -fx-background-color: white;
+}
+
+.item-title {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.5em;
+}
+
+.item-description {
+    -fx-font-weight: normal;
+    -fx-text-fill: white;
+    -fx-font-style: italic;
+    -fx-wrap-text: true;
+    -fx-font-size: 0.85em;
+}

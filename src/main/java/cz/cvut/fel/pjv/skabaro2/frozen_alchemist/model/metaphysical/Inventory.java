@@ -22,4 +22,8 @@ public class Inventory {
             content.put(inventoryItem, newAmount);
         }
     }
+
+    public Map<InventoryItem, Integer> getContent() {
+        return content;
+    }
 }

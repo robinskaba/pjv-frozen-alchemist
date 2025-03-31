@@ -33,5 +33,6 @@ public class Screen {
     private void loadFonts() {
         // loading font (workaround around javafx %20 space bug)
         Font.loadFont(getClass().getResourceAsStream("/fonts/blockstepped.ttf"), 12);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/minecraft.ttf"), 12);
     }
 }

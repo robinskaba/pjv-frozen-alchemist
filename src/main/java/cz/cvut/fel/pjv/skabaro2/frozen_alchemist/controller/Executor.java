@@ -3,17 +3,24 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.Controls;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.Game;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.InventoryItem;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.ProgressFileManager;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
 import javafx.animation.AnimationTimer;
+import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Executor {
     private Screen screen;
     private AnimationTimer gameLoop;
+
+    private GameScene gameScene;
+    private Game game;
 
     private final Controls controls = new Controls();
 
@@ -25,14 +32,19 @@ public class Executor {
     private void initiate() {
         MenuScene menuScene = new MenuScene(this::playGame, ProgressFileManager::resetFile);
         screen.setScene(menuScene);
-        //playGame(); // testing
+        playGame(); // testing
     }
 
     private void playGame() {
-        GameScene gameScene = new GameScene();
-        Game game = new Game(controls, () -> {
-            System.out.println("GAME OVER");
-        });
+        gameScene = new GameScene(this::getMenuData);
+        game = new Game(
+            controls,
+            () -> { System.out.println("GAME OVER"); },
+            () -> {
+                getMenuData();
+                gameScene.updateMenus();
+            }
+        );
 
         gameScene.setOnKeyPressed(e -> {
             controls.keyPressed(e.getCode().toString());
@@ -75,5 +87,37 @@ public class Executor {
         }
 
         return renderedData;
+    }
+
+    private void getMenuData() {
+        ArrayList<MenuItem> craftingData = new ArrayList<>();
+        ArrayList<MenuItem> inventoryData = new ArrayList<>();
+
+        Map<InventoryItem, Integer> inventoryItems = game.getPlayerInventory().getContent();
+        for (Map.Entry<InventoryItem, Integer> entry : inventoryItems.entrySet()) {
+            InventoryItem inventoryItem = entry.getKey();
+            int amount = entry.getValue();
+
+            Image image = TextureManager.getImage(inventoryItem.getItemType());
+
+            for (int i = 0; i < amount; i++) {
+                inventoryData.add(
+                    new MenuItem(
+                        image,
+                        () -> { System.out.println("EQUIP: " + inventoryItem.getName()); },
+                        () -> {
+                            gameScene.showItemInfo(inventoryItem.getName(), inventoryItem.getDescription());
+                        }
+                    )
+                );
+            }
+        }
+
+        MenuData menuData = new MenuData(
+            inventoryData.toArray(new MenuItem[0]),
+            craftingData.toArray(new MenuItem[0])
+        );
+
+        gameScene.setMenuData(menuData);
     }
 }

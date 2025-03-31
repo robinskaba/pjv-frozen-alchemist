@@ -1,6 +1,7 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.Inventory;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.MapLoader;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 public class Game {
     private final Runnable onGameEnded;
+    private final Runnable onItemPickup;
     private final Controls controls;
 
     private final Player player = new Player(new Position(0, 0)); // lets assume he will just setPosition on new level
@@ -21,9 +23,10 @@ public class Game {
     private GameMap currentMap;
     private MovementHandler movementHandler;
 
-    public Game(Controls controls, Runnable onGameEnded) {
+    public Game(Controls controls, Runnable onGameEnded, Runnable onItemPickup) {
         this.controls = controls;
         this.onGameEnded = onGameEnded;
+        this.onItemPickup = onItemPickup;
 
         setupGameLogic();
 
@@ -34,6 +37,10 @@ public class Game {
     public Entity[] getEntities() {
         ArrayList<Entity> entities = currentMap.getEntities();
         return entities.toArray(new Entity[0]);
+    }
+
+    public Inventory getPlayerInventory() {
+        return player.getInventory();
     }
 
     private void setStartingLevel() {
@@ -70,6 +77,7 @@ public class Game {
             if (itemOnFloor == null) return;
             player.receiveItem(itemOnFloor);
             currentMap.remove(itemOnFloor);
+            onItemPickup.run();
         });
     }
 }

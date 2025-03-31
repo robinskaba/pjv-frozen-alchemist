@@ -149,9 +149,7 @@ public class MapLoader {
                 }
             }
 
-            System.out.println("appending: <" + readChar + ">");
             buffer.append(readChar);
-            System.out.println("current buffer: <" + buffer.toString() + ">");
         }
     }
 
