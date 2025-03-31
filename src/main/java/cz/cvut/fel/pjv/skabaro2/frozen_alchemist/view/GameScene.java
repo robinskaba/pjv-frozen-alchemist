@@ -72,25 +72,32 @@ public class GameScene extends Scene {
     }
 
     private void setupInventoryButton() {
+        double size = 100;
+
         Image defaultImage = new Image(GameScene.class.getResourceAsStream("/ui/crafting_overlay.png"));
 
         ImageView buttonImageView = new ImageView(defaultImage);
-        buttonImageView.setFitWidth(100);
-        buttonImageView.setFitHeight(100);
 
         mainMenuButton = new Button();
         mainMenuButton.getStyleClass().add("main-button");
         mainMenuButton.setGraphic(buttonImageView);
         mainMenuButton.setLayoutX(windowWidth - 150);
         mainMenuButton.setLayoutY(windowHeight - 175);
+        mainMenuButton.setPrefWidth(size);
+        mainMenuButton.setPrefHeight(size);
+        mainMenuButton.setPadding(Insets.EMPTY);
+
+        double overlayImageSizeRatio = 0.75;
 
         mainMenuButtonOverlayImage = new ImageView();
-        mainMenuButtonOverlayImage.setFitWidth(80);
-        mainMenuButtonOverlayImage.setFitHeight(80);
+        mainMenuButtonOverlayImage.setFitWidth(size * overlayImageSizeRatio);
+        mainMenuButtonOverlayImage.setFitHeight(size * overlayImageSizeRatio);
         mainMenuButtonOverlayImage.setVisible(false);
 
-        mainMenuButtonOverlayImage.setLayoutX(mainMenuButton.getLayoutX() + 10);
-        mainMenuButtonOverlayImage.setLayoutY(mainMenuButton.getLayoutY() + 10);
+        mainMenuButtonOverlayImage.setLayoutX(mainMenuButton.getLayoutX() + size * (1 - overlayImageSizeRatio) / 2);
+        mainMenuButtonOverlayImage.setLayoutY(mainMenuButton.getLayoutY() + size * (1 - overlayImageSizeRatio) / 2);
+
+        mainMenuButtonOverlayImage.setMouseTransparent(true); // prevent blocking mouse input to button
 
         mainMenuButton.setOnAction(e -> showMenus(true));
 
@@ -165,9 +172,6 @@ public class GameScene extends Scene {
 
         menus.getChildren().addAll(itemInfoPanel, craftingPanel, inventoryPanel);
 
-//        itemInfoPanel.setVisible(false); // hide specifically until first hint clicked
-//        menus.setVisible(false);
-
         // HIDING UI WHEN CLICKING OUTSIDE MENUS
         this.setOnMousePressed(event -> {
             if (!menus.isVisible()) return; // do nothing if already hidden
@@ -187,6 +191,7 @@ public class GameScene extends Scene {
 
     public void setButtonOverlayImage(Image image) {
         mainMenuButtonOverlayImage.setImage(image);
+        mainMenuButtonOverlayImage.setVisible(true);
     }
 
     public void showMenus(boolean show) {

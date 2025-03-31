@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Inventory {
     private final Map<InventoryItem, Integer> content = new HashMap<>();
+    private InventoryItem equippedItem;
 
     public void add(InventoryItem inventoryItem) {
         int amount = content.getOrDefault(inventoryItem, 0);
@@ -25,5 +26,13 @@ public class Inventory {
 
     public Map<InventoryItem, Integer> getContent() {
         return content;
+    }
+
+    public InventoryItem getEquippedItem() {
+        return equippedItem;
+    }
+
+    public void setEquippedItem(InventoryItem equippedItem) {
+        this.equippedItem = equippedItem;
     }
 }

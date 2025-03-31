@@ -104,7 +104,12 @@ public class Executor {
                 inventoryData.add(
                     new MenuItem(
                         image,
-                        () -> { System.out.println("EQUIP: " + inventoryItem.getName()); },
+                        () -> {
+                            game.getPlayerInventory().setEquippedItem(inventoryItem); // equip selected item
+                            Image itemImage = TextureManager.getImage(inventoryItem.getItemType());
+                            gameScene.showMenus(false);
+                            gameScene.setButtonOverlayImage(itemImage);
+                        },
                         () -> {
                             gameScene.showItemInfo(inventoryItem.getName(), inventoryItem.getDescription());
                         }
