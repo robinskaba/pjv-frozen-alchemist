@@ -6,6 +6,7 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.Game;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.InventoryItem;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.ProgressFileManager;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemCategory;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
@@ -105,6 +106,8 @@ public class Executor {
                     new MenuItem(
                         image,
                         () -> {
+                            if (inventoryItem.getItemType().getCategory() != ItemCategory.POTION) return;
+
                             game.getPlayerInventory().setEquippedItem(inventoryItem); // equip selected item
                             Image itemImage = TextureManager.getImage(inventoryItem.getItemType());
                             gameScene.showMenus(false);
