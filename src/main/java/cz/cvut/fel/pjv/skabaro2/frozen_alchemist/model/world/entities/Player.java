@@ -11,6 +11,8 @@ public class Player extends Entity {
     private Direction facingDirection = Direction.RIGHT;
     private final Inventory inventory = new Inventory();
 
+    private int stepsWithLevitationLeft = 0;
+
     public Player(Position startingPosition) {
         super(EntityType.PLAYER, startingPosition);
     }
@@ -25,7 +27,7 @@ public class Player extends Entity {
     }
 
     public boolean isLevitating() {
-        return true;
+        return stepsWithLevitationLeft > 0;
     }
 
     public void receiveItem(Item item) {
@@ -40,5 +42,18 @@ public class Player extends Entity {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public Direction getFacingDirection() {
+        return facingDirection;
+    }
+
+    public void setStepsWithLevitationLeft(int stepsWithLevitationLeft) {
+        this.stepsWithLevitationLeft = stepsWithLevitationLeft;
+    }
+
+    public void useLevitationStep() {
+        if (stepsWithLevitationLeft == 0) throw new IllegalStateException("Levitation step could not have been used!");
+        stepsWithLevitationLeft--;
     }
 }

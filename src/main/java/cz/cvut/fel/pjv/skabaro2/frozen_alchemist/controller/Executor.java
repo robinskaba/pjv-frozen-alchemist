@@ -44,6 +44,9 @@ public class Executor {
             () -> {
                 getMenuData();
                 gameScene.updateMenus();
+            },
+            () -> {
+                gameScene.setButtonOverlayImage(null);
             }
         );
 

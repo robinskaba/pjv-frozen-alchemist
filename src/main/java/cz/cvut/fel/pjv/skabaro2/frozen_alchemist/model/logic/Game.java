@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class Game {
     private final Runnable onGameEnded;
     private final Runnable onItemPickup;
+    private final Runnable onItemUsed;
     private final Controls controls;
 
     private final Player player = new Player(new Position(0, 0)); // lets assume he will just setPosition on new level
@@ -21,12 +22,13 @@ public class Game {
 
     private int currentLevel;
     private GameMap currentMap;
-    private MovementHandler movementHandler;
+    private PlayerController playerController;
 
-    public Game(Controls controls, Runnable onGameEnded, Runnable onItemPickup) {
+    public Game(Controls controls, Runnable onGameEnded, Runnable onItemPickup, Runnable onItemUsed) {
         this.controls = controls;
         this.onGameEnded = onGameEnded;
         this.onItemPickup = onItemPickup;
+        this.onItemUsed = onItemUsed;
 
         setupGameLogic();
 
@@ -51,7 +53,7 @@ public class Game {
     private void loadLevel() {
         currentMap = mapLoader.buildMap(currentLevel);
         currentMap.setPlayer(player);
-        movementHandler.updateGameMap(currentMap);
+        playerController.updateGameMap(currentMap);
     }
 
     private void goToNextLevel() {
@@ -65,13 +67,13 @@ public class Game {
     }
 
     private void setupGameLogic() {
-        movementHandler = new MovementHandler(currentMap, player, controls);
+        playerController = new PlayerController(currentMap, player, controls, onItemUsed);
 
-        movementHandler.onBlockEnter(BlockType.Exit, () -> {
+        playerController.onBlockEnter(BlockType.Exit, () -> {
             System.out.println("Exit!!");
             goToNextLevel();
         });
-        movementHandler.onBlockEnter(BlockType.Floor, () -> {
+        playerController.onBlockEnter(BlockType.Floor, () -> {
             // item picking up logic (no connection to view? perhaps in model?)
             Item itemOnFloor = currentMap.getItemOnPosition(player.getPosition());
             if (itemOnFloor == null) return;

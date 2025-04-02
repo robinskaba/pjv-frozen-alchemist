@@ -12,11 +12,10 @@ public class Inventory {
         System.out.println("Inventory item " + inventoryItem + " added to the content");
     }
 
-    public void remove(InventoryItem inventoryItem, int amount) throws Exception {
+    public void remove(InventoryItem inventoryItem, int amount) {
         int currentAmount = content.getOrDefault(inventoryItem, 0);
         int newAmount = currentAmount - amount;
 
-        if (newAmount < 0) throw new Exception("Item amount should not become negative.");
         if (newAmount == 0) {
             content.remove(inventoryItem);
         } else {
