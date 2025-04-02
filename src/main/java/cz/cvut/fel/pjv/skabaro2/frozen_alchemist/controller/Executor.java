@@ -40,7 +40,10 @@ public class Executor {
         gameScene = new GameScene(this::getMenuData);
         game = new Game(
             controls,
-            () -> { System.out.println("GAME OVER"); },
+            () -> {
+                EndScene endScene = new EndScene();
+                screen.setScene(endScene);
+            },
             () -> {
                 getMenuData();
                 gameScene.updateMenus();
