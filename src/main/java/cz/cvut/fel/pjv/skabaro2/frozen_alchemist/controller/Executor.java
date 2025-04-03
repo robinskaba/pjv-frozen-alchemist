@@ -11,14 +11,10 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Executor {
-    private Screen screen;
-    private AnimationTimer gameLoop;
+    private final Screen screen;
 
     private GameScene gameScene;
     private Game game;
@@ -60,9 +56,7 @@ public class Executor {
             controls.keyReleased(e.getCode().toString());
         });
 
-        this.screen.setScene(gameScene);
-
-        gameLoop = new AnimationTimer() {
+        AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long l) {
                 Map<LoadedImage, PixelPosition> renderedData = getRenderedData(game.getEntities());
@@ -71,6 +65,8 @@ public class Executor {
         };
 
         gameLoop.start();
+
+        screen.setScene(gameScene);
     }
 
     private Map<LoadedImage, PixelPosition> getRenderedData(Entity[] entities) {
