@@ -4,24 +4,13 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.util.Map;
-
-public class GameScene extends Scene {
-    private static Pane root;
-    private static GraphicsContext gc;
-
-    private static int windowWidth = Config.getInt("window_width");
-    private static int windowHeight = Config.getInt("window_height");
-
+public class GameView extends View {
     private final int menuWidth = 225;
 
     private Button mainMenuButton;
@@ -36,53 +25,40 @@ public class GameScene extends Scene {
     private MenuData menuData;
     private final Runnable fetchMenuData;
 
-    public GameScene(Runnable fetchMenuData) {
-        super(createRoot());
+    public GameView(Runnable fetchMenuData) {
+        super();
         getStylesheets().add(getClass().getResource("/styles/game_scene.css").toExternalForm());
 
         this.fetchMenuData = fetchMenuData;
-        setupCanvas();
         setupInventoryButton();
         setupInventoryAndCraftingMenu();
         showMenus(false);
     }
 
-    public void render(Map<LoadedImage, PixelPosition> entities) {
+    public void render(RenderedTexture[] renderedTextures) {
         gc.clearRect(0, 0, Config.getInt("window_width"), Config.getInt("window_height"));
 
-        for (Map.Entry<LoadedImage, PixelPosition> entry : entities.entrySet()) {
-            LoadedImage loadedImage = entry.getKey();
-            PixelPosition pixelPosition = entry.getValue();
-            double size = loadedImage.getSize();
+        for (RenderedTexture renderedTexture : renderedTextures) {
+            Texture texture = renderedTexture.getTexture();
+            PixelPosition pixelPosition = renderedTexture.getPixelPosition();
+            double size = texture.getSize();
 
-            gc.drawImage(loadedImage.getImage(), pixelPosition.getX(), pixelPosition.getY(), size, size);
+            gc.drawImage(texture.getImage(), pixelPosition.getX(), pixelPosition.getY(), size, size);
         }
-    }
-
-    private static Pane createRoot() {
-        root = new Pane();
-        return root;
-    }
-
-    private void setupCanvas() {
-        Canvas canvas = new Canvas(windowWidth, windowHeight);
-        gc = canvas.getGraphicsContext2D();
-
-        root.getChildren().add(canvas);
     }
 
     private void setupInventoryButton() {
         double size = 100;
 
-        Image defaultImage = new Image(GameScene.class.getResourceAsStream("/ui/crafting_overlay.png"));
+        Image defaultImage = new Image(GameView.class.getResourceAsStream("/ui/crafting_overlay.png"));
 
         ImageView buttonImageView = new ImageView(defaultImage);
 
         mainMenuButton = new Button();
         mainMenuButton.getStyleClass().add("main-button");
         mainMenuButton.setGraphic(buttonImageView);
-        mainMenuButton.setLayoutX(windowWidth - 150);
-        mainMenuButton.setLayoutY(windowHeight - 175);
+        mainMenuButton.setLayoutX(Config.getInt("window_width") - 150);
+        mainMenuButton.setLayoutY(Config.getInt("window_height") - 175);
         mainMenuButton.setPrefWidth(size);
         mainMenuButton.setPrefHeight(size);
         mainMenuButton.setPadding(Insets.EMPTY);
@@ -101,7 +77,7 @@ public class GameScene extends Scene {
 
         mainMenuButton.setOnAction(e -> showMenus(true));
 
-        root.getChildren().addAll(mainMenuButton, mainMenuButtonOverlayImage);
+        this.getChildren().addAll(mainMenuButton, mainMenuButtonOverlayImage);
     }
 
     private Region createMenuRegion(double width, double height) {
@@ -112,11 +88,11 @@ public class GameScene extends Scene {
     }
 
     private StackPane createMenuPanel(String title, GridPane itemGrid) {
-        double width = menuWidth, height = windowHeight - 100;
+        double height = Config.getDouble("window_height") - 100;
 
         StackPane panel = new StackPane();
 
-        Region background = createMenuRegion(width, height);
+        Region background = createMenuRegion(menuWidth, height);
 
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("menu-title");
@@ -186,7 +162,7 @@ public class GameScene extends Scene {
             showMenus(false);
         });
 
-        root.getChildren().addAll(menus);
+        this.getChildren().addAll(menus);
     }
 
     public void setButtonOverlayImage(Image image) {
@@ -199,6 +175,7 @@ public class GameScene extends Scene {
         mainMenuButton.setVisible(!show);
         menus.setVisible(show);
 
+        if (mainMenuButtonOverlayImage.getImage() != null) mainMenuButtonOverlayImage.setVisible(!show);
         if (show) {
             fetchMenuData.run();
             updateMenus();

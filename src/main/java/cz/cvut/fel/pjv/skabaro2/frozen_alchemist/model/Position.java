@@ -1,4 +1,4 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
 import java.util.Objects;
 
@@ -27,13 +27,36 @@ public class Position {
         return y;
     }
 
-    public Position getPositionWithDirection(Direction direction) {
-        return switch (direction) {
-            case UP -> new Position(this.x, this.y - 1);
-            case DOWN -> new Position(this.x, this.y + 1);
-            case LEFT -> new Position(this.x - 1, this.y);
-            case RIGHT -> new Position(this.x + 1, this.y);
-        };
+    public void incrementX() {
+        x++;
+    }
+
+    public void incrementY() {
+        y++;
+    }
+
+    public void decrementX() {
+        x--;
+    }
+
+    public void decrementY() {
+        y--;
+    }
+
+    public Position copy() {
+        return new Position(x, y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return x == position.x && y == position.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 
     @Override
@@ -42,12 +65,5 @@ public class Position {
                 "x=" + x +
                 ", y=" + y +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Position position = (Position) o;
-        return x == position.x && y == position.y;
     }
 }

@@ -1,66 +1,66 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.Controls;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.logic.Game;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.InventoryItem;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.metaphysical.ProgressFileManager;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.entities.Entity;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.world.types.ItemCategory;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.*;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
 import javafx.animation.AnimationTimer;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class Executor {
+    private final Stage stage;
     private final Screen screen;
 
-    private GameScene gameScene;
     private Game game;
+    private GameView gameView;
 
-    private final Controls controls = new Controls();
+    public Executor(Stage stage) {
+        this.stage = stage;
 
-    public Executor(Screen screen) {
-        this.screen = screen;
-        initiate();
+        screen = new Screen(stage, "Frozen Alchemist", "/textures/potion_of_levitation.png");
+
+        loadLobby();
     }
 
-    private void initiate() {
-        MenuScene menuScene = new MenuScene(this::playGame, ProgressFileManager::resetFile);
-        screen.setScene(menuScene);
-        playGame(); // testing
+    private void loadLobby() {
+        MenuView lobby = new MenuView("/ui/background_w_title.png");
+        lobby.addButton("Play Game", this::loadGame);
+        lobby.addButton("Reset Progress", () -> System.out.println("Reset Progress"));
+
+        Scene scene = new Scene(lobby);
+        stage.setScene(scene);
     }
 
-    private void playGame() {
-        gameScene = new GameScene(this::getMenuData);
+    private void loadGame() {
+        Controls controls = new Controls();
+
         game = new Game(
             controls,
-            () -> {
-                EndScene endScene = new EndScene();
-                screen.setScene(endScene);
-            },
-            () -> {
-                getMenuData();
-                gameScene.updateMenus();
-            },
-            () -> {
-                gameScene.setButtonOverlayImage(null);
-            }
+            this::loadEnd,
+            this::updateInventoryButtonOverlay,
+            this::getMenuData
         );
 
-        gameScene.setOnKeyPressed(e -> {
+        TextureManager.load();
+        gameView = new GameView(this::getMenuData);
+        Scene gameScene = new Scene(gameView);
+
+        // bind registering keystrokes
+        gameView.setOnKeyPressed(e -> {
             controls.keyPressed(e.getCode().toString());
         });
-        gameScene.setOnKeyReleased(e -> {
+        gameView.setOnKeyReleased(e -> {
             controls.keyReleased(e.getCode().toString());
         });
 
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                Map<LoadedImage, PixelPosition> renderedData = getRenderedData(game.getEntities());
-                gameScene.render(renderedData);
+                RenderedTexture[] renderedTextures = Visualizer.getRenderedData(game.getEntities());
+                gameView.render(renderedTextures);
             }
         };
 
@@ -69,57 +69,70 @@ public class Executor {
         screen.setScene(gameScene);
     }
 
-    private Map<LoadedImage, PixelPosition> getRenderedData(Entity[] entities) {
-        Map<LoadedImage, PixelPosition> renderedData = new LinkedHashMap<>(); // LinkedHashMap ensures order!
-
-        for (Entity entity : entities) {
-            LoadedImage loadedImage = TextureManager.getLoadedImage(entity);
-
-            // calculating offset because some textures are too large
-            int tileSizeInPixels = 64;
-            Position position = entity.getPosition();
-
-            double offset = loadedImage.getScale() < 1f ?
-                    (tileSizeInPixels - loadedImage.getScale() * tileSizeInPixels) / 2f : 0;
-            double x = position.getX() * tileSizeInPixels + offset;
-            double y = position.getY() * tileSizeInPixels + offset;
-
-            PixelPosition pixelPosition = new PixelPosition(x, y);
-
-            renderedData.put(loadedImage, pixelPosition);
-        }
-
-        return renderedData;
+    private void loadEnd() {
+        MenuView endView = new MenuView("/ui/end_screen_background.png");
+        Scene scene = new Scene(endView);
+        stage.setScene(scene);
     }
 
     private void getMenuData() {
         ArrayList<MenuItem> craftingData = new ArrayList<>();
         ArrayList<MenuItem> inventoryData = new ArrayList<>();
 
-        Map<InventoryItem, Integer> inventoryItems = game.getPlayerInventory().getContent();
-        for (Map.Entry<InventoryItem, Integer> entry : inventoryItems.entrySet()) {
-            InventoryItem inventoryItem = entry.getKey();
+        Inventory inventory = game.getPlayer().getInventory();
+        Map<ItemType, Integer> inventoryItems = inventory.getContent();
+        for (Map.Entry<ItemType, Integer> entry : inventoryItems.entrySet()) {
+            ItemType itemType = entry.getKey();
             int amount = entry.getValue();
 
-            Image image = TextureManager.getImage(inventoryItem.getItemType());
+            Image image = TextureManager.getTexture(itemType).getImage();
 
             for (int i = 0; i < amount; i++) {
                 inventoryData.add(
                     new MenuItem(
                         image,
                         () -> {
-                            if (inventoryItem.getItemType().getCategory() != ItemCategory.POTION) return;
-
-                            game.getPlayerInventory().setEquippedItem(inventoryItem); // equip selected item
-                            Image itemImage = TextureManager.getImage(inventoryItem.getItemType());
-                            gameScene.showMenus(false);
-                            gameScene.setButtonOverlayImage(itemImage);
+                            inventory.setEquippedItemType(itemType); // equip selected item
+                            gameView.showMenus(false);
+                            gameView.setButtonOverlayImage(image);
                         },
-                        () -> {
-                            gameScene.showItemInfo(inventoryItem.getName(), inventoryItem.getDescription());
-                        }
+                        () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription())
                     )
                 );
+            }
+        }
+
+        for (ItemType itemType : ItemType.values()) {
+            Map<ItemType, Integer> recipe = itemType.getRecipe();
+            if (recipe == null) continue; // non-craftable items
+
+            boolean hasAll = true;
+            for (Map.Entry<ItemType, Integer> component : recipe.entrySet()) {
+                ItemType componentType = component.getKey();
+                int amount = component.getValue();
+                if (!inventory.has(componentType, amount)) {
+                    hasAll = false;
+                    break;
+                }
+            }
+
+            if (hasAll) {
+                Image image = TextureManager.getTexture(itemType).getImage();
+                MenuItem craftableItem = new MenuItem(
+                    image,
+                    () -> {
+                        // use up items in inventory
+                        for (Map.Entry<ItemType, Integer> component : recipe.entrySet()) {
+                            inventory.remove(component.getKey(), component.getValue());
+                        }
+
+                        // add crafted item to inventory
+                        inventory.add(itemType);
+                        getMenuData();
+                    },
+                    () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription())
+                );
+                craftingData.add(craftableItem);
             }
         }
 
@@ -128,6 +141,11 @@ public class Executor {
             craftingData.toArray(new MenuItem[0])
         );
 
-        gameScene.setMenuData(menuData);
+        gameView.setMenuData(menuData);
+        gameView.updateMenus();
+    }
+
+    private void updateInventoryButtonOverlay() {
+        gameView.setButtonOverlayImage(null);
     }
 }
