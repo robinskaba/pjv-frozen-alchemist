@@ -128,6 +128,7 @@ public class Executor {
 
                         // add crafted item to inventory
                         inventory.add(itemType);
+                        if (inventory.getEquippedItemType() == null) gameView.setButtonOverlayImage(null);
                         getMenuData();
                     },
                     () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription())

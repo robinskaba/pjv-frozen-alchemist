@@ -18,6 +18,7 @@ public class Inventory {
 
         if (newAmount == 0) {
             content.remove(itemType);
+            if (itemType == equippedItemType) equippedItemType = null;
         } else {
             content.put(itemType, newAmount);
         }
