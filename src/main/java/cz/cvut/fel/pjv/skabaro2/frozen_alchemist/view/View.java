@@ -9,9 +9,10 @@ public class View extends Pane {
     protected final GraphicsContext gc;
 
     public View() {
+        getStylesheets().add(getClass().getResource("/styles/general.css").toExternalForm());
+
         Canvas canvas = new Canvas(Config.getInt("window_width"), Config.getInt("window_height"));
         gc = canvas.getGraphicsContext2D();
-
         this.getChildren().add(canvas);
     }
 }

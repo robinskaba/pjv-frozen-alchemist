@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import java.io.InputStream;
 
 public class Screen {
-    private Stage stage;
+    private final Stage stage;
 
     public Screen(Stage stage, String gameName, String gameIconRelativePath) {
         this.stage = stage;
@@ -33,7 +33,6 @@ public class Screen {
 
     public void setScene(Scene scene) {
         this.stage.setScene(scene);
-        scene.getStylesheets().add(getClass().getResource("/styles/general.css").toExternalForm());
     }
 
     private void loadFonts() {
