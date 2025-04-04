@@ -49,10 +49,10 @@ public class Executor {
         Scene gameScene = new Scene(gameView);
 
         // bind registering keystrokes
-        gameView.setOnKeyPressed(e -> {
+        gameScene.setOnKeyPressed(e -> {
             controls.keyPressed(e.getCode().toString());
         });
-        gameView.setOnKeyReleased(e -> {
+        gameScene.setOnKeyReleased(e -> {
             controls.keyReleased(e.getCode().toString());
         });
 
