@@ -38,11 +38,10 @@ public class MenuView extends View {
         int windowHeight = Config.getInt("window_height");
 
         buttonBox = new VBox(15);
-        buttonBox.setAlignment(Pos.CENTER); // Keep buttons centered within the VBox
-        buttonBox.setPrefWidth(windowWidth / 2.0); // Ensures the VBox isn't stretched too wide
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPrefWidth(250);
 
-        double buttonOffsetY = 250; // Adjust this to move the buttons up
-        buttonBox.setLayoutY(windowHeight - buttonOffsetY);
+        buttonBox.setLayoutY(windowHeight - 250);
         buttonBox.setLayoutX((windowWidth - buttonBox.getPrefWidth()) / 2);
 
         // Add buttonBox to the root pane
@@ -51,6 +50,7 @@ public class MenuView extends View {
 
     public void addButton(String buttonText, Runnable onClick) {
         Button button = new Button(buttonText);
+        button.setMaxWidth(Double.MAX_VALUE);
         button.setOnAction(e -> onClick.run());
         buttonBox.getChildren().add(button);
     }
