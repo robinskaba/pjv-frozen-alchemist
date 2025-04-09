@@ -4,10 +4,13 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.*;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Executor {
@@ -16,6 +19,7 @@ public class Executor {
 
     private Game game;
     private GameView gameView;
+    private AnimationTimer gameLoop;
 
     public Executor(Stage stage) {
         this.stage = stage;
@@ -28,14 +32,23 @@ public class Executor {
     private void loadLobby() {
         MenuView lobby = new MenuView("/ui/background_w_title.png");
         lobby.addButton("Play Game", this::loadGame);
-        lobby.addButton("Reset Progress", () -> System.out.println("Reset Progress"));
+        lobby.addButton("Reset Progress", this::resetProgress);
 
         Scene scene = new Scene(lobby);
         stage.setScene(scene);
     }
 
     private void loadGame() {
+        gameLoop = new AnimationTimer() {
+            @Override
+            public void handle(long l) {
+                RenderedTexture[] renderedTextures = getRenderedData(game.getEntities());
+                gameView.render(renderedTextures);
+            }
+        };
+
         Controls controls = new Controls();
+        TextureManager.load();
 
         game = new Game(
             controls,
@@ -44,7 +57,6 @@ public class Executor {
             this::getMenuData
         );
 
-        TextureManager.load();
         gameView = new GameView(this::getMenuData);
         Scene gameScene = new Scene(gameView);
 
@@ -56,23 +68,43 @@ public class Executor {
             controls.keyReleased(e.getCode().toString());
         });
 
-        AnimationTimer gameLoop = new AnimationTimer() {
-            @Override
-            public void handle(long l) {
-                RenderedTexture[] renderedTextures = Visualizer.getRenderedData(game.getEntities());
-                gameView.render(renderedTextures);
-            }
-        };
-
-        gameLoop.start();
-
-        screen.setScene(gameScene);
+        // only perform if game is running (is not if game won is saved)
+        if (game.isRunning()) {
+            // bind saving progress
+            stage.setOnCloseRequest(e -> game.save());
+            gameLoop.start();
+            screen.setScene(gameScene);
+        }
     }
 
     private void loadEnd() {
         MenuView endView = new MenuView("/ui/end_screen_background.png");
         Scene scene = new Scene(endView);
         stage.setScene(scene);
+    }
+
+    public RenderedTexture[] getRenderedData(Entity[] entities) {
+        List<RenderedTexture> renderedTextures = new LinkedList<>();
+
+        for (Entity entity : entities) {
+            Object subtype = entity.getSubType();
+            Texture texture = TextureManager.getTexture(subtype);
+
+            // calculating offset because some textures are too large
+            int tileSizeInPixels = 64;
+            Position position = entity.getPosition();
+
+            double offset = texture.getScale() < 1f ?
+                    (tileSizeInPixels - texture.getScale() * tileSizeInPixels) / 2f : 0;
+            double x = position.getX() * tileSizeInPixels + offset;
+            double y = position.getY() * tileSizeInPixels + offset;
+
+            PixelPosition pixelPosition = new PixelPosition(x, y);
+
+            renderedTextures.add(new RenderedTexture(texture, pixelPosition));
+        }
+
+        return renderedTextures.toArray(new RenderedTexture[0]);
     }
 
     private void getMenuData() {
@@ -148,5 +180,14 @@ public class Executor {
 
     private void updateInventoryButtonOverlay() {
         gameView.setButtonOverlayImage(null);
+    }
+
+    private void resetProgress() {
+        ProgressFileManager.resetProgress();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Reset Progress");
+        alert.setHeaderText(null);
+        alert.setContentText("Progress has been reset.");
+        alert.showAndWait();
     }
 }

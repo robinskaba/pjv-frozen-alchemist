@@ -28,6 +28,11 @@ public class Inventory {
         return content;
     }
 
+    public void setContent(Map<ItemType, Integer> content) {
+        this.content.clear();
+        this.content.putAll(content);
+    }
+
     public ItemType getEquippedItemType() {
         return equippedItemType;
     }

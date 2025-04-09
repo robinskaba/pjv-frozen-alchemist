@@ -8,15 +8,12 @@ import java.util.List;
 public class GameMap {
     private final ArrayList<Entity> entities = new ArrayList<>();
 
-    private final int widthInTiles = Config.getInt("width_in_tiles");
-    private final int heightInTiles = Config.getInt("height_in_tiles");
+    private final int width = Config.getInt("width_in_tiles");
+    private final int height = Config.getInt("height_in_tiles");
 
     public GameMap(Block[] blocks, Item[] items) {
         entities.addAll(List.of(blocks));
         entities.addAll(List.of(items));
-        for (Entity e : entities) {
-            System.out.println(e.toString());
-        }
     }
 
     public ArrayList<Entity> getEntities() {
@@ -38,7 +35,7 @@ public class GameMap {
     }
 
     public boolean isPositionInMap(Position position) {
-        return position.getX() >= 0 && position.getX() < widthInTiles && position.getY() >= 0 && position.getY() < heightInTiles;
+        return position.getX() >= 0 && position.getX() < width && position.getY() >= 0 && position.getY() < height;
     }
 
     public void remove(Entity entity) {
@@ -47,5 +44,13 @@ public class GameMap {
 
     public void add(Entity entity) {
         entities.add(entity);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

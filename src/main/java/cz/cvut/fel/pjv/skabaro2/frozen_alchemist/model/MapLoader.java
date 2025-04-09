@@ -38,30 +38,43 @@ public class MapLoader {
         }
     }
 
-    public static LevelData getLevelData(int level) {
-        InputStream stream = Config.class.getResourceAsStream(String.format("%s/level%d.txt", LEVELS, level));
-        if (stream == null) throw new IllegalArgumentException("No level file exists for level: " + level);
-        InputStreamReader reader = new InputStreamReader(stream);
+    public static LevelData getLevelData(String textRepresentation) {
+        return buildLevelData(textRepresentation);
+    }
 
+    public static LevelData getLevelData(int level) {
+        String textRepresentation = readLevelAsString(level);
+        return buildLevelData(textRepresentation);
+    }
+
+    private static LevelData buildLevelData(String textRepresentation) {
+        System.out.println("x");
+        Block[] blocks = getBlocks(textRepresentation);
+        System.out.println("y");
+        Item[] items = getItems(textRepresentation);
+        System.out.println("z");
+        Position initial = getInitialPlayerPosition(textRepresentation);
+        System.out.println("a");
+        return new LevelData(blocks, items, initial);
+    }
+
+    private static String readLevelAsString(int level) {
         try {
-            Block[] blocks = getBlocks(reader);
-            Item[] items = getItems(reader);
-            Position initial = getInitialPlayerPosition(reader);
-            return new LevelData(blocks, items, initial);
+            return Files.readString(Path.of("src/main/resources/levels/level" + level + ".txt")); // todo lepsi path
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // Handle or rethrow the exception depending on your use-case.
+            e.printStackTrace();
+            throw new RuntimeException("Failed to read file for level " + level, e);
         }
     }
 
-    private static Block[] getBlocks(InputStreamReader reader) throws IOException {
+    private static Block[] getBlocks(String textRepresentation) {
         ArrayList<Block> blocks = new ArrayList<>();
 
+        int i = 0;
         int x = 0, y = 0; // for specifying block's position
         while (true) {
-            int sign = reader.read();
-            if (sign == -1) throw new RuntimeException("Map file should not end before '%' sign is present"); // EOF
-
-            char code = (char) sign;
+            char code = textRepresentation.charAt(i);
 
             switch (code) {
                 case '%': return blocks.toArray(new Block[0]); // end of block declaration
@@ -81,25 +94,22 @@ public class MapLoader {
                     x++;
                 }
             }
+
+            i++;
         }
     }
 
-    private static Item[] getItems(InputStreamReader reader) throws IOException {
-        // skip over '\n' after separation char '%'
-        reader.skip(1);
-
+    private static Item[] getItems(String textRepresentation) {
         ArrayList<Item> items = new ArrayList<>();
-
         StringBuilder buffer = new StringBuilder();
         String name = null;
         int x = -1;
         int y = -1;
 
+        int i = textRepresentation.indexOf("%") + 2;
         while (true) {
-            int sign = reader.read();
-            if (sign == -1) throw new IOException("File can not end before player initial position declaration."); // legit EOF
-            Character readChar = (char) sign;
-
+            char readChar = textRepresentation.charAt(i);
+            System.out.println("reading item: " + readChar);
             switch (readChar) {
                 case '%': return items.toArray(new Item[0]); // end of block declaration
                 case '\n': {
@@ -108,46 +118,41 @@ public class MapLoader {
                         throw new RuntimeException("Error reading name/x/y of entity.");
                     }
 
-
                     ItemType itemType = ItemType.fromSaveCode(name);
                     Position position = new Position(x, y);
                     Item newItem = new Item(itemType, position);
                     items.add(newItem);
-                    continue;
+                    break;
                 }
                 case '(': {
                     name = buffer.toString();
                     buffer.delete(0, buffer.length());
-                    continue;
+                    break;
                 }
                 case ',': {
                     x = Integer.parseInt(buffer.toString());
                     buffer.delete(0, buffer.length());
-                    continue;
+                    break;
                 }
                 case ')': {
                     y = Integer.parseInt(buffer.toString());
                     buffer.delete(0, buffer.length());
-                    continue;
+                    break;
                 }
+                default: buffer.append(readChar);
             }
 
-            buffer.append(readChar);
+            i++;
         }
     }
-    private static Position getInitialPlayerPosition(InputStreamReader reader) throws IOException {
-        // skip over '\n' after separation char '%'
-        reader.skip(1);
-
+    private static Position getInitialPlayerPosition(String textRepresentation) {
         StringBuilder buffer = new StringBuilder();
         int x = -1;
         int y = -1;
 
+        int i = textRepresentation.lastIndexOf("%") + 2;
         while (true) {
-            int sign = reader.read();
-            if (sign == -1) throw new IOException("File reading should not end because of EOF.");
-            Character readChar = (char) sign;
-
+            char readChar = textRepresentation.charAt(i);
             switch (readChar) {
                 case '\n': {
                     y = Integer.parseInt(buffer.toString());
@@ -162,11 +167,12 @@ public class MapLoader {
                 case ',': {
                     x = Integer.parseInt(buffer.toString());
                     buffer.delete(0, buffer.length());
-                    continue;
+                    break;
                 }
+                default: buffer.append(readChar);
             }
 
-            buffer.append(readChar);
+            i++;
         }
     }
 }
