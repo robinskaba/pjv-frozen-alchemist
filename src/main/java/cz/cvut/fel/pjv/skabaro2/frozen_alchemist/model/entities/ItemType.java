@@ -1,8 +1,10 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
+
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.SaveConfig;
 
 import java.util.Map;
 
-public enum ItemType implements Saveable, Storable {
+public enum ItemType implements Savable, Storable {
     // Ingredient Types
     EmberFlower("Ember Flower", "A flower that burns with a cold flame.", new SaveConfig("EF", "ember_flower.png")),
     EmptyGlassFlask("Empty Glass Flask", "A flask for holding potions.", new SaveConfig("EGF", "empty_glass_flask.png")),

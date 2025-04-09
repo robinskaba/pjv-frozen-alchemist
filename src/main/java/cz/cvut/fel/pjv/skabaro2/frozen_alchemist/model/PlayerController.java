@@ -1,5 +1,8 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.*;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -19,10 +22,10 @@ public class PlayerController {
         this.onItemPickup = onItemPickup;
 
         // bind movement to controls
-        controls.bindFunction("W", () -> this.movePlayer(PlayerDirection.UP));
-        controls.bindFunction("S", () -> this.movePlayer(PlayerDirection.DOWN));
-        controls.bindFunction("A", () -> this.movePlayer(PlayerDirection.LEFT));
-        controls.bindFunction("D", () -> this.movePlayer(PlayerDirection.RIGHT));
+        controls.bindFunction("W", () -> this.movePlayer(Direction.UP));
+        controls.bindFunction("S", () -> this.movePlayer(Direction.DOWN));
+        controls.bindFunction("A", () -> this.movePlayer(Direction.LEFT));
+        controls.bindFunction("D", () -> this.movePlayer(Direction.RIGHT));
 
         controls.bindFunction("E", this::useItem);
     }
@@ -40,12 +43,12 @@ public class PlayerController {
         if (assignedFunc != null) assignedFunc.run();
     }
 
-    public void movePlayer(PlayerDirection playerDirection) {
-        player.setDirection(playerDirection);
+    public void movePlayer(Direction direction) {
+        player.setDirection(direction);
 
         Position currentPosition = player.getPosition();
         Position newPosition = new Position(currentPosition.getX(), currentPosition.getY());
-        switch (playerDirection) {
+        switch (direction) {
             case UP: newPosition.decrementY(); break;
             case DOWN: newPosition.incrementY(); break;
             case LEFT: newPosition.decrementX(); break;
@@ -85,10 +88,10 @@ public class PlayerController {
 
         Position facingPosition = player.getPosition().copy();
         switch (player.getSubType()) {
-            case PlayerDirection.UP -> facingPosition.decrementY();
-            case PlayerDirection.DOWN -> facingPosition.incrementY();
-            case PlayerDirection.LEFT -> facingPosition.decrementX();
-            case PlayerDirection.RIGHT -> facingPosition.incrementX();
+            case Direction.UP -> facingPosition.decrementY();
+            case Direction.DOWN -> facingPosition.incrementY();
+            case Direction.LEFT -> facingPosition.decrementX();
+            case Direction.RIGHT -> facingPosition.incrementX();
             default -> throw new IllegalStateException("Unexpected value: " + player.getSubType());
         }
 

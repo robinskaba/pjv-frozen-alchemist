@@ -1,5 +1,7 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
+
 import java.util.*;
 
 public class Inventory {
@@ -9,7 +11,6 @@ public class Inventory {
     public void add(ItemType itemType) {
         int amount = content.getOrDefault(itemType, 0);
         content.put(itemType, amount + 1);
-        System.out.println("Inventory item " + itemType + " added to the content");
     }
 
     public void remove(ItemType itemType, int amount) {

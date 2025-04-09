@@ -1,6 +1,7 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

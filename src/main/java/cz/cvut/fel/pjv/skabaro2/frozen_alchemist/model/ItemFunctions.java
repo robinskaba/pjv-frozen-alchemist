@@ -1,6 +1,11 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Player;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Block;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.BlockType;
+
 public class ItemFunctions {
     public static boolean grantLevitation(Player player) {
         player.setLevitationSteps(2);

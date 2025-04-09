@@ -1,4 +1,4 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller.TextureManager;
 import javafx.scene.image.Image;

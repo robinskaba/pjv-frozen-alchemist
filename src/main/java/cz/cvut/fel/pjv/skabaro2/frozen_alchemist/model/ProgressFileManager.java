@@ -3,6 +3,9 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.ProgressSave;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,6 +17,10 @@ import java.util.Map;
 public class ProgressFileManager {
     private final static String RELATIVE_PROGRESS_FILE_PATH = "src/main/resources/progress.json";
 
+    private final static String LEVEL_KEY = "level";
+    private final static String INVENTORY_KEY = "inventory";
+    private final static String MAP_KEY = "map";
+
     private static Path getProgressFilePath() {
         return Paths.get(RELATIVE_PROGRESS_FILE_PATH);
     }
@@ -24,9 +31,9 @@ public class ProgressFileManager {
         JsonObject mapObj = buildMapSave(gameMap, player);
 
         JsonObject saveObj = new JsonObject();
-        saveObj.add("level", levelObj);
-        saveObj.add("inventory", inventoryObj);
-        saveObj.add("map", mapObj);
+        saveObj.add(LEVEL_KEY, levelObj);
+        saveObj.add(INVENTORY_KEY, inventoryObj);
+        saveObj.add(MAP_KEY, mapObj);
 
         Gson gson = new Gson();
         Path path = Paths.get(RELATIVE_PROGRESS_FILE_PATH);
@@ -118,9 +125,9 @@ public class ProgressFileManager {
         try (Reader reader = Files.newBufferedReader(filePath)) {
             JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 
-            level = jsonObject.get("level").getAsJsonObject().get("value").getAsInt();
+            level = jsonObject.get(LEVEL_KEY).getAsJsonObject().get("value").getAsInt();
 
-            JsonObject inventoryObj = jsonObject.get("inventory").getAsJsonObject();
+            JsonObject inventoryObj = jsonObject.get(INVENTORY_KEY).getAsJsonObject();
             for (Map.Entry<String, JsonElement> entry : inventoryObj.entrySet()) {
                 JsonObject itemObj = entry.getValue().getAsJsonObject();
                 ItemType itemType = ItemType.fromSaveCode(itemObj.get("itemCode").getAsString());
@@ -128,7 +135,7 @@ public class ProgressFileManager {
                 inventoryContent.put(itemType, amount);
             }
 
-            JsonObject mapObj = jsonObject.get("map").getAsJsonObject();
+            JsonObject mapObj = jsonObject.get(MAP_KEY).getAsJsonObject();
             mapString = mapObj.get("text").getAsString();
 
         } catch (IOException e) {

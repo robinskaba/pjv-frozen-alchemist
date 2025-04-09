@@ -1,4 +1,7 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data;
+
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Block;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Item;
 
 public class LevelData {
     private final Block[] blocks;

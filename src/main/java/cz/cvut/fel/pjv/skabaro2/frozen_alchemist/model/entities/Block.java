@@ -1,4 +1,6 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
+
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 
 public class Block extends Entity {
     private final BlockType blockType;

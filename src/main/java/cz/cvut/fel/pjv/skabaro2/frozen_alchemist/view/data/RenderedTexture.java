@@ -1,4 +1,4 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data;
 
 public class RenderedTexture {
     private final Texture texture;

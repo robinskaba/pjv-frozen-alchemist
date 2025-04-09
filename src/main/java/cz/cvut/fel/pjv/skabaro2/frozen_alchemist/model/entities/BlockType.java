@@ -1,6 +1,8 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
 
-public enum BlockType implements Saveable {
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.SaveConfig;
+
+public enum BlockType implements Savable {
     FloorBlock(new SaveConfig("X", "floor_ice.png")),
     WallBlock(new SaveConfig("I", "regular_ice.png")),
     MeltableWallBlock(new SaveConfig("M", "meltable_ice.png")),

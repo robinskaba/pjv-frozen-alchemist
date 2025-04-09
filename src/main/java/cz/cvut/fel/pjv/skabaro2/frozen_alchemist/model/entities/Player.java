@@ -1,9 +1,12 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
+
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.Inventory;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 
 public class Player extends Entity {
     private final Inventory inventory = new Inventory();
     private int levitatingStepsLeft = 0;
-    private PlayerDirection playerDirection = PlayerDirection.RIGHT;
+    private Direction direction = Direction.RIGHT;
 
     public Player(Position position) {
         super(EntityType.PLAYER, position);
@@ -25,12 +28,12 @@ public class Player extends Entity {
         return inventory;
     }
 
-    public void setDirection(PlayerDirection playerDirection) {
-        this.playerDirection = playerDirection;
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 
     @Override
     public Object getSubType() {
-        return playerDirection;
+        return direction;
     }
 }

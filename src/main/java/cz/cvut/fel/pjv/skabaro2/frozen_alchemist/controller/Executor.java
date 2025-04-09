@@ -1,7 +1,15 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.*;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.Game;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.common.GameAlert;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.*;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views.GameView;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views.MenuView;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -19,7 +27,6 @@ public class Executor {
 
     private Game game;
     private GameView gameView;
-    private AnimationTimer gameLoop;
 
     public Executor(Stage stage) {
         this.stage = stage;
@@ -39,7 +46,7 @@ public class Executor {
     }
 
     private void loadGame() {
-        gameLoop = new AnimationTimer() {
+        AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long l) {
                 RenderedTexture[] renderedTextures = getRenderedData(game.getEntities());
@@ -120,17 +127,15 @@ public class Executor {
             Image image = TextureManager.getTexture(itemType).getImage();
 
             for (int i = 0; i < amount; i++) {
-                inventoryData.add(
-                    new MenuItem(
-                        image,
-                        () -> {
-                            inventory.setEquippedItemType(itemType); // equip selected item
-                            gameView.showMenus(false);
-                            gameView.setButtonOverlayImage(image);
-                        },
-                        () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription())
-                    )
-                );
+                Runnable equipItem = () -> {
+                    inventory.setEquippedItemType(itemType); // equip selected item
+                    gameView.showMenus(false);
+                    gameView.setButtonOverlayImage(image);
+                };
+                Runnable onHintClick = () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription());
+                MenuItem slot = new MenuItem(image, equipItem, onHintClick);
+
+                inventoryData.add(slot);
             }
         }
 
@@ -138,6 +143,7 @@ public class Executor {
             Map<ItemType, Integer> recipe = itemType.getRecipe();
             if (recipe == null) continue; // non-craftable items
 
+            // calculating if he can afford the item
             boolean hasAll = true;
             for (Map.Entry<ItemType, Integer> component : recipe.entrySet()) {
                 ItemType componentType = component.getKey();
@@ -150,22 +156,23 @@ public class Executor {
 
             if (hasAll) {
                 Image image = TextureManager.getTexture(itemType).getImage();
-                MenuItem craftableItem = new MenuItem(
-                    image,
-                    () -> {
-                        // use up items in inventory
-                        for (Map.Entry<ItemType, Integer> component : recipe.entrySet()) {
-                            inventory.remove(component.getKey(), component.getValue());
-                        }
+                Runnable craftItem = () -> {
+                    // use up items in inventory
+                    for (Map.Entry<ItemType, Integer> component : recipe.entrySet()) {
+                        inventory.remove(component.getKey(), component.getValue());
+                    }
 
-                        // add crafted item to inventory
-                        inventory.add(itemType);
-                        if (inventory.getEquippedItemType() == null) gameView.setButtonOverlayImage(null);
-                        getMenuData();
-                    },
-                    () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription())
-                );
-                craftingData.add(craftableItem);
+                    // add crafted item to inventory
+                    inventory.add(itemType);
+                    if (inventory.getEquippedItemType() == null) gameView.setButtonOverlayImage(null);
+
+                    // refresh ui
+                    getMenuData();
+                };
+                Runnable showItemInfo = () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription());
+
+                MenuItem slot = new MenuItem(image, craftItem, showItemInfo);
+                craftingData.add(slot);
             }
         }
 

@@ -1,4 +1,6 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
+
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 
 // Entities are things on the map
 public abstract class Entity {

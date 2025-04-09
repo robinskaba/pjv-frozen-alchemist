@@ -1,5 +1,12 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.LevelData;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.ProgressSave;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.BlockType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Player;
+
 import java.util.List;
 
 public class Game {

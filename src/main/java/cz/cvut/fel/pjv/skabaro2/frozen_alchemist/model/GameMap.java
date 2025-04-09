@@ -1,5 +1,10 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Block;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.EntityType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Item;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 
 import java.util.ArrayList;
