@@ -50,7 +50,7 @@ public class GameView extends View {
     private void setupInventoryButton() {
         double size = 100;
 
-        Image defaultImage = new Image(GameView.class.getResourceAsStream("/ui/crafting_overlay.png"));
+        Image defaultImage = new Image(GameView.class.getResourceAsStream("/ui/action_button.png"));
 
         ImageView buttonImageView = new ImageView(defaultImage);
 

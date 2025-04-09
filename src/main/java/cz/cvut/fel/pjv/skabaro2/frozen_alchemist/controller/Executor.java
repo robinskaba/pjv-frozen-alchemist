@@ -24,13 +24,13 @@ public class Executor {
     public Executor(Stage stage) {
         this.stage = stage;
 
-        screen = new Screen(stage, "Frozen Alchemist", "/textures/potion_of_levitation.png");
+        screen = new Screen(stage, "Frozen Alchemist", "/ui/game_icon.png");
 
         loadLobby();
     }
 
     private void loadLobby() {
-        MenuView lobby = new MenuView("/ui/background_w_title.png");
+        MenuView lobby = new MenuView("/ui/lobby_background.png");
         lobby.addButton("Play Game", this::loadGame);
         lobby.addButton("Reset Progress", this::resetProgress);
 
@@ -78,7 +78,7 @@ public class Executor {
     }
 
     private void loadEnd() {
-        MenuView endView = new MenuView("/ui/end_screen_background.png");
+        MenuView endView = new MenuView("/ui/game_won_background.png");
         Scene scene = new Scene(endView);
         stage.setScene(scene);
     }
@@ -184,10 +184,10 @@ public class Executor {
 
     private void resetProgress() {
         ProgressFileManager.resetProgress();
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Reset Progress");
-        alert.setHeaderText(null);
-        alert.setContentText("Progress has been reset.");
-        alert.showAndWait();
+        GameAlert gameAlert = new GameAlert(stage.getScene(), Alert.AlertType.CONFIRMATION);
+        gameAlert.setTitle("Progress Reset");
+        gameAlert.setHeaderText(null);
+        gameAlert.setContentText("Your progress has been reset.");
+        gameAlert.showAndWait();
     }
 }

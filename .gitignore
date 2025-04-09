@@ -36,3 +36,5 @@ build/
 /.idea/
 
 /src/main/resources/progress.json
+/working_files
+/working_files/*
