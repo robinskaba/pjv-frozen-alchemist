@@ -18,13 +18,7 @@ public class Screen {
         this.stage.setWidth(Config.getDouble("window_width"));
         this.stage.setHeight(Config.getDouble("window_height"));
 
-        InputStream iconStream = getClass().getResourceAsStream(gameIconRelativePath);
-        if (iconStream == null) {
-            System.err.println("Game icon not found at path: " + gameIconRelativePath);
-        } else {
-            Image icon = new Image(iconStream);
-            this.stage.getIcons().add(icon);
-        }
+        this.stage.getIcons().add(new Image(getClass().getResourceAsStream(gameIconRelativePath)));
 
         loadFonts();
 

@@ -19,7 +19,7 @@ public class TextureManager {
         }
 
         for (ItemType itemType : ItemType.values()) {
-            Texture texture = new Texture(itemType.getSaveConfig().getRelativePath(), 0.5f);
+            Texture texture = new Texture(itemType.getSaveConfig().getRelativePath(), 0.6f);
             itemTextures.put(itemType, texture);
         }
 
@@ -29,24 +29,6 @@ public class TextureManager {
         playerOrientedTextures.put(Direction.RIGHT, new Texture("player_right.png", playerSpriteScale));
         playerOrientedTextures.put(Direction.LEFT, new Texture("player_left.png", playerSpriteScale));
     }
-
-//    public static Texture getTexture(BlockType blockType) {
-//        Texture texture = blockTextures.get(blockType);
-//        if (texture == null) throw new RuntimeException("BlockType " + blockType + " not loaded");
-//        return texture;
-//    }
-//
-//    public static Texture getTexture(ItemType itemType) {
-//        Texture texture = itemTextures.get(itemType);
-//        if (texture == null) throw new RuntimeException("ItemType " + itemType + " not loaded");
-//        return texture;
-//    }
-//
-//    public static Texture getTexture(PlayerDirection playerDirection) {
-//        Texture texture = playerOrientedTextures.get(playerDirection);
-//        if (texture == null) throw new RuntimeException("Direction " + playerDirection + " not loaded");
-//        return texture;
-//    }
 
     public static Texture getTexture(Object subtype) {
         if (subtype instanceof BlockType) return blockTextures.get(subtype);
