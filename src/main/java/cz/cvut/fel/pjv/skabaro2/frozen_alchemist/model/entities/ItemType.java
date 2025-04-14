@@ -58,25 +58,25 @@ public enum ItemType implements Savable, Storable {
             "Potion of Melting",
             "Some blocks are beginning to melt, this will finish the job.",
             new SaveConfig("POM", "potion_of_melting.png"),
-            Map.of(EmberFlower, 1)
+            Map.of(EmptyGlassFlask, 1, MysticVine, 1, EmberFlower, 1, SulfurCrystal, 1)
     ),
     PotionOfPulverization(
             "Potion of Pulverization",
             "Pulverizes certain obstacles, even a large pile of rubble.",
             new SaveConfig("POP", "potion_of_pulverization.png"),
-            Map.of(Gunpowder, 1)
+            Map.of(EmptyGlassFlask, 1, Gunpowder, 2, VolatileSalt, 1)
     ),
     PotionOfLevitation(
             "Potion of Levitation",
             "Allows levitation over the deep chasms.",
             new SaveConfig("POL", "potion_of_levitation.png"),
-            Map.of(Feather, 1)
+            Map.of(EmptyGlassFlask, 1, RabbitFoot, 1, Feather, 1)
     ),
     PotionOfFrost(
             "Potion of Frost",
             "Ever heard of the frozen Bering Strait?",
             new SaveConfig("POF", "potion_of_frost.png"),
-            Map.of(GlacialShard, 1)
+            Map.of(EmptyGlassFlask, 1, MysticVine, 1, GlacialShard, 2)
     );
 
     private final String name;
