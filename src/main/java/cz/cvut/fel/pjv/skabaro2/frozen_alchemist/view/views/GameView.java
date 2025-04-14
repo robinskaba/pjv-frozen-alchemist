@@ -40,11 +40,11 @@ public class GameView extends View {
         gc.clearRect(0, 0, Config.getInt("window_width"), Config.getInt("window_height"));
 
         for (RenderedTexture renderedTexture : renderedTextures) {
-            Texture texture = renderedTexture.getTexture();
-            PixelPosition pixelPosition = renderedTexture.getPixelPosition();
+            Texture texture = renderedTexture.texture();
+            PixelPosition pixelPosition = renderedTexture.pixelPosition();
             double size = texture.getSize();
 
-            gc.drawImage(texture.getImage(), pixelPosition.getX(), pixelPosition.getY(), size, size);
+            gc.drawImage(texture.getImage(), pixelPosition.x(), pixelPosition.y(), size, size);
         }
     }
 
@@ -195,9 +195,9 @@ public class GameView extends View {
         Image hintIcon = new Image(getClass().getResourceAsStream("/ui/hint.png"));
 
         for (MenuItem menuItem : items) {
-            Image itemImage = menuItem.getImage();
-            Runnable onItemClick = menuItem.getOnItemClick();
-            Runnable onHintClick = menuItem.getOnHintClick();
+            Image itemImage = menuItem.image();
+            Runnable onItemClick = menuItem.onItemClick();
+            Runnable onHintClick = menuItem.onHintClick();
 
             ImageView itemImageView = new ImageView(itemImage);
 
@@ -238,8 +238,8 @@ public class GameView extends View {
         craftingGridPane.getChildren().clear();
         inventoryGridPane.getChildren().clear();
 
-        updateMenu(menuData.getCraftingData(), craftingGridPane);
-        updateMenu(menuData.getInventoryData(), inventoryGridPane);
+        updateMenu(menuData.craftingData(), craftingGridPane);
+        updateMenu(menuData.inventoryData(), inventoryGridPane);
     }
 
     public void setMenuData(MenuData menuData) {
