@@ -14,6 +14,10 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Manages saving and loading game progress to and from a JSON file.
+ * Handles serialization and deserialization of game state, including level, inventory, and map data.
+ */
 public class ProgressFileManager {
     private final static String RELATIVE_PROGRESS_FILE_PATH = "src/main/resources/progress.json";
 
@@ -21,10 +25,22 @@ public class ProgressFileManager {
     private final static String INVENTORY_KEY = "inventory";
     private final static String MAP_KEY = "map";
 
+    /**
+     * Retrieves the path to the progress file.
+     *
+     * @return The path to the progress file.
+     */
     private static Path getProgressFilePath() {
         return Paths.get(RELATIVE_PROGRESS_FILE_PATH);
     }
 
+    /**
+     * Saves the current game progress to a JSON file.
+     *
+     * @param level    The current level of the game.
+     * @param player   The player entity, including inventory data.
+     * @param gameMap  The current game map.
+     */
     public static void save(int level, Player player, GameMap gameMap) {
         JsonObject levelObj = buildLevelSave(level);
         JsonObject inventoryObj = buildInventorySave(player.getInventory());
@@ -45,15 +61,27 @@ public class ProgressFileManager {
         }
     }
 
+    /**
+     * Builds a JSON object representing the level data.
+     *
+     * @param level The current level of the game.
+     * @return A JSON object containing the level data.
+     */
     private static JsonObject buildLevelSave(int level) {
         JsonObject levelObj = new JsonObject();
         levelObj.addProperty("value", level);
         return levelObj;
     }
 
+    /**
+     * Builds a JSON object representing the player's inventory.
+     *
+     * @param inventory The player's inventory.
+     * @return A JSON object containing the inventory data.
+     */
     private static JsonObject buildInventorySave(Inventory inventory) {
         JsonObject inventoryObj = new JsonObject();
-        int i = 0; // pseudo name for the item record
+        int i = 0; // need unique name for item record
         for (Map.Entry<ItemType, Integer> item : inventory.getContent().entrySet()) {
             ItemType itemType = item.getKey();
             Integer amount = item.getValue();
@@ -68,6 +96,13 @@ public class ProgressFileManager {
         return inventoryObj;
     }
 
+    /**
+     * Builds a JSON object representing the game map and player position.
+     *
+     * @param gameMap The current game map.
+     * @param player  The player entity, including position data.
+     * @return A JSON object containing the map data.
+     */
     private static JsonObject buildMapSave(GameMap gameMap, Player player) {
         StringBuilder textMapBuilder = new StringBuilder();
 
@@ -79,7 +114,7 @@ public class ProgressFileManager {
                 String code = blockType.getSaveConfig().getCode();
                 textMapBuilder.append(String.format("%s ", code));
             }
-            textMapBuilder.deleteCharAt(textMapBuilder.length()-1); // remove last space
+            textMapBuilder.deleteCharAt(textMapBuilder.length() - 1); // remove last space.
             textMapBuilder.append("\n");
         }
         textMapBuilder.append("%\n"); // end of blocks
@@ -97,26 +132,28 @@ public class ProgressFileManager {
         }
         textMapBuilder.append("%\n"); // end of items
 
-        // set starting position as last player position
+        // set starting position as the last player position
         String positionFormat = String.format("%d,%d", player.getPosition().getX(), player.getPosition().getY());
         textMapBuilder.append(positionFormat);
         textMapBuilder.append("\n"); // end of save file
 
-        // build map json
+        // build map JSON
         JsonObject mapObj = new JsonObject();
         mapObj.addProperty("text", textMapBuilder.toString());
 
         return mapObj;
     }
 
+    /**
+     * Loads the game progress from the JSON file.
+     *
+     * @return A ProgressSave object containing the loaded game state, or null if the file does not exist.
+     */
     public static ProgressSave load() {
         Path filePath = getProgressFilePath();
         Gson gson = new Gson();
 
-        if (!Files.exists(filePath)) {
-            System.out.println("Progress file not found.");
-            return null;
-        }
+        if (!Files.exists(filePath)) return null;
 
         int level;
         Map<ItemType, Integer> inventoryContent = new HashMap<>();
@@ -139,19 +176,20 @@ public class ProgressFileManager {
             mapString = mapObj.get("text").getAsString();
 
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException("Failed to load progress file at " + RELATIVE_PROGRESS_FILE_PATH, e);
         }
         return new ProgressSave(level, inventoryContent, mapString);
     }
 
+    /**
+     * Resets the game progress by deleting the progress file.
+     */
     public static void resetProgress() {
         Path filePath = getProgressFilePath();
 
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException("Failed to delete progress file at " + RELATIVE_PROGRESS_FILE_PATH, e);
         }
     }

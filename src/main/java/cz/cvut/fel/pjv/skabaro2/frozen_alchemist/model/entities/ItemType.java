@@ -4,8 +4,10 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.SaveConfig;
 
 import java.util.Map;
 
+/**
+ * Enum representing different types of items in the game.
+ */
 public enum ItemType implements Savable, Storable {
-    // Ingredient Types
     EmberFlower("Ember Flower", "A flower that burns with a cold flame.", new SaveConfig("EF", "ember_flower.png")),
     EmptyGlassFlask("Empty Glass Flask", "A flask for holding potions.", new SaveConfig("EGF", "empty_glass_flask.png")),
     Feather("Feather", "A light and delicate feather.", new SaveConfig("F", "feather.png")),
@@ -16,7 +18,6 @@ public enum ItemType implements Savable, Storable {
     SulfurCrystal("Sulfur Crystal", "A crystal of sulfur.", new SaveConfig("SC", "sulfur_crystal.png")),
     VolatileSalt("Volatile Salt", "A salt that reacts violently.", new SaveConfig("VS", "volatile_salt.png")),
 
-    // Potion Types
     PotionOfMelting("Potion of Melting", "Melts blocks.", new SaveConfig("POM", "potion_of_melting.png"),
             Map.of(EmberFlower, 1)),
     PotionOfPulverization("Potion of Pulverization", "Pulverizes obstacles.", new SaveConfig("POP", "potion_of_pulverization.png"),
@@ -31,6 +32,11 @@ public enum ItemType implements Savable, Storable {
     private final SaveConfig saveConfig;
     private final Map<ItemType, Integer> recipe;
 
+    /**
+     * @param name The name of the item.
+     * @param description A brief description of the item.
+     * @param saveConfig The save configuration for the item.
+     */
     ItemType(String name, String description, SaveConfig saveConfig) {
         this.name = name;
         this.description = description;
@@ -38,6 +44,12 @@ public enum ItemType implements Savable, Storable {
         this.recipe = null;
     }
 
+    /**
+     * @param name The name of the item.
+     * @param description A brief description of the item.
+     * @param saveConfig The save configuration for the item.
+     * @param recipe The crafting recipe for the item.
+     */
     ItemType(String name, String description, SaveConfig saveConfig, Map<ItemType, Integer> recipe) {
         this.name = name;
         this.description = description;
@@ -64,12 +76,12 @@ public enum ItemType implements Savable, Storable {
         return recipe;
     }
 
-    public boolean canCraft() {
-        if (this.recipe == null) return false;
-        // TODO calculate from array
-        return true;
-    }
-
+    /**
+     * Returns an ItemType that uses the passed save code.
+     *
+     * @param saveCode The save code to look up.
+     * @return The corresponding ItemType, or null if no match is found.
+     */
     public static ItemType fromSaveCode(String saveCode) {
         for (ItemType itemType : ItemType.values()) {
             if (itemType.getSaveConfig().getCode().equals(saveCode)) return itemType;

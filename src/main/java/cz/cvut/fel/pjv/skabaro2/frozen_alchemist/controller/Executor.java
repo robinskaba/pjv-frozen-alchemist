@@ -3,6 +3,7 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.controller;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.*;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Inventory;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.Game;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
@@ -42,7 +43,7 @@ public class Executor {
         lobby.addButton("Reset Progress", this::resetProgress);
 
         Scene scene = new Scene(lobby);
-        stage.setScene(scene);
+        screen.setScene(scene);
     }
 
     private void loadGame() {
@@ -80,7 +81,7 @@ public class Executor {
             // bind saving progress
             stage.setOnCloseRequest(e -> game.save());
             gameLoop.start();
-            screen.setScene(gameScene);
+            stage.setScene(gameScene);
         }
     }
 

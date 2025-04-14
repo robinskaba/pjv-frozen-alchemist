@@ -1,6 +1,4 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
-
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
 
 import java.util.*;
 
