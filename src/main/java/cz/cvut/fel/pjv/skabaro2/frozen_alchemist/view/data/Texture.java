@@ -16,8 +16,7 @@ public class Texture {
 
         this.image = new Image(resourceStream);
         this.scale = scale;
-//        this.size = Config.getInt("tile_size_in_pixels") * scale;
-        this.size = 64 * scale; // TODO make customizable
+        this.size = 64 * scale;
     }
 
     public float getScale() {
