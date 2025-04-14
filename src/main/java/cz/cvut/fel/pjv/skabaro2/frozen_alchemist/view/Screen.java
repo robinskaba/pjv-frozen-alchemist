@@ -7,9 +7,19 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.InputStream;
 
+/**
+ * Represents the main screen of the game, managing the stage, title, icon, and fonts loaded.
+ */
 public class Screen {
     private final Stage stage;
 
+    /**
+     * Constructs a new Screen instance.
+     *
+     * @param stage                 The JavaFX Stage to be used for the game window.
+     * @param gameName              The title of the game to be displayed on the window.
+     * @param gameIconRelativePath  The relative path to the game's icon image.
+     */
     public Screen(Stage stage, String gameName, String gameIconRelativePath) {
         this.stage = stage;
 
@@ -25,12 +35,21 @@ public class Screen {
         this.stage.show();
     }
 
+    /**
+     * Sets the scene for the stage.
+     *
+     * @param scene The JavaFX Scene to be displayed on the stage.
+     */
     public void setScene(Scene scene) {
         this.stage.setScene(scene);
     }
 
+    /**
+     * Loads custom fonts required for the game.
+     * This method is used because a workaround was needed for a JavaFX bug related to spaces in file paths.
+     */
     private void loadFonts() {
-        // loading font (workaround around javafx %20 space bug)
+        // loading font (workaround around JavaFX %20 space bug)
         Font.loadFont(getClass().getResourceAsStream("/fonts/minecraft.ttf"), 12);
     }
 }

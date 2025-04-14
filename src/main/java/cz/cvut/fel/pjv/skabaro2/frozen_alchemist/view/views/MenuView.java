@@ -8,9 +8,18 @@ import javafx.geometry.Pos;
 
 import java.io.InputStream;
 
+/**
+ * Represents a menu view in the game, including a background image and a vertical box for buttons.
+ */
 public class MenuView extends View {
     private VBox buttonBox;
 
+    /**
+     * Constructs a new MenuView instance.
+     *
+     * @param backgroundImagePath The path to the background image for the menu.
+     * @throws RuntimeException If the background image cannot be found at the specified path.
+     */
     public MenuView(String backgroundImagePath) {
         super();
 
@@ -19,20 +28,27 @@ public class MenuView extends View {
         setupButtonBox();
     }
 
-    // workaround because super "has to be first statement in constructor"
+    /**
+     * Sets up the background image for the menu.
+     *
+     * @param backgroundImagePath The path to the background image.
+     * @throws RuntimeException If the background image cannot be found at the specified path.
+     */
     private void setupBackground(String backgroundImagePath) {
         int windowWidth = Config.getInt("window_width");
         int windowHeight = Config.getInt("window_height");
 
         System.out.println("Loading background image from path: " + backgroundImagePath);
         InputStream backgroundImageStream = MenuView.class.getResourceAsStream(backgroundImagePath);
-        if (backgroundImageStream == null) {
-            throw new RuntimeException("Background image not found at path: " + backgroundImagePath);
-        }
+        if (backgroundImageStream == null) throw new RuntimeException("Background image not found at path: " + backgroundImagePath);
         Image background = new Image(backgroundImageStream);
         gc.drawImage(background, 0, 0, windowWidth, windowHeight);
     }
 
+    /**
+     * Sets up the vertical box for laying out the menu buttons.
+     * The box is centered horizontally and positioned near the bottom of the window.
+     */
     private void setupButtonBox() {
         int windowWidth = Config.getInt("window_width");
         int windowHeight = Config.getInt("window_height");
@@ -44,14 +60,22 @@ public class MenuView extends View {
         buttonBox.setLayoutY(windowHeight - 250);
         buttonBox.setLayoutX((windowWidth - buttonBox.getPrefWidth()) / 2);
 
-        // Add buttonBox to the root pane
         this.getChildren().add(buttonBox);
     }
 
+    /**
+     * Adds a button to the menu.
+     *
+     * @param buttonText The text to display on the button.
+     * @param onClick    The function to execute when the button is clicked.
+     */
     public void addButton(String buttonText, Runnable onClick) {
         Button button = new Button(buttonText);
         button.setMaxWidth(Double.MAX_VALUE);
+
+        // binding button click to a set function
         button.setOnAction(e -> onClick.run());
+
         buttonBox.getChildren().add(button);
     }
 }

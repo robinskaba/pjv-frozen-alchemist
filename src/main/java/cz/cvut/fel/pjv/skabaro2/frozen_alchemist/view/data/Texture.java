@@ -5,11 +5,22 @@ import javafx.scene.image.Image;
 
 import java.io.InputStream;
 
+/**
+ * Represents a texture in the game, including its image, scale, and size.
+ * The texture is loaded from a specified relative path within the resources.
+ */
 public class Texture {
     private final Image image;
     private final float scale;
     private final double size;
 
+    /**
+     * Constructs a new Texture instance.
+     *
+     * @param relativePath The relative path to the texture file within the resources.
+     * @param scale        The scale factor to apply to the texture.
+     * @throws IllegalArgumentException If the resource cannot be found at the specified path.
+     */
     public Texture(String relativePath, float scale) {
         InputStream resourceStream = TextureManager.class.getResourceAsStream("/textures/" + relativePath);
         if (resourceStream == null) throw new IllegalArgumentException("Resource not found: " + relativePath);
