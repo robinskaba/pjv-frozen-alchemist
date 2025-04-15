@@ -19,7 +19,7 @@ import java.util.Map;
  * Handles serialization and deserialization of game state, including level, inventory, and map data.
  */
 public class ProgressFileManager {
-    private final static String RELATIVE_PROGRESS_FILE_PATH = "src/main/resources/progress.json";
+    private final static String PROGRESS_FILE_URL = "progress.json"; // changes, so outside resources!!
 
     private final static String LEVEL_KEY = "level";
     private final static String INVENTORY_KEY = "inventory";
@@ -30,8 +30,8 @@ public class ProgressFileManager {
      *
      * @return The path to the progress file.
      */
-    private static Path getProgressFilePath() {
-        return Paths.get(RELATIVE_PROGRESS_FILE_PATH);
+    private static Path getProgressFileUrl() {
+        return Paths.get(PROGRESS_FILE_URL);
     }
 
     /**
@@ -52,11 +52,12 @@ public class ProgressFileManager {
         saveObj.add(MAP_KEY, mapObj);
 
         Gson gson = new Gson();
-        Path path = Paths.get(RELATIVE_PROGRESS_FILE_PATH);
+        Path path = Paths.get(PROGRESS_FILE_URL);
 
         try (Writer writer = Files.newBufferedWriter(path)) {
             gson.toJson(saveObj, writer);
         } catch (Exception e) {
+            // TODO Logger
             e.printStackTrace();
         }
     }
@@ -150,9 +151,10 @@ public class ProgressFileManager {
      * @return A ProgressSave object containing the loaded game state, or null if the file does not exist.
      */
     public static ProgressSave load() {
-        Path filePath = getProgressFilePath();
+        Path filePath = getProgressFileUrl();
         Gson gson = new Gson();
 
+        // no file exists, return null
         if (!Files.exists(filePath)) return null;
 
         int level;
@@ -176,7 +178,7 @@ public class ProgressFileManager {
             mapString = mapObj.get("text").getAsString();
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load progress file at " + RELATIVE_PROGRESS_FILE_PATH, e);
+            throw new RuntimeException("Failed to load progress file at " + PROGRESS_FILE_URL, e);
         }
         return new ProgressSave(level, inventoryContent, mapString);
     }
@@ -185,12 +187,12 @@ public class ProgressFileManager {
      * Resets the game progress by deleting the progress file.
      */
     public static void resetProgress() {
-        Path filePath = getProgressFilePath();
+        Path filePath = getProgressFileUrl();
 
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to delete progress file at " + RELATIVE_PROGRESS_FILE_PATH, e);
+            throw new RuntimeException("Failed to delete progress file at " + PROGRESS_FILE_URL, e);
         }
     }
 }
