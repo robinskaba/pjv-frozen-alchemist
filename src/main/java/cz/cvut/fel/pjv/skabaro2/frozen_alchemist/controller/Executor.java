@@ -6,6 +6,7 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Inventory;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.Game;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.common.GameAlert;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.*;
@@ -32,7 +33,7 @@ public class Executor {
     public Executor(Stage stage) {
         this.stage = stage;
 
-        screen = new Screen(stage, "Frozen Alchemist", "/ui/game_icon.png");
+        screen = new Screen(stage, Config.getString("title"), "/ui/game_icon.png");
 
         loadLobby();
     }
