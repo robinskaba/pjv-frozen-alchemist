@@ -1,15 +1,15 @@
-I I I I I I I I I I I I I I I I
-X X X X X X X X X X X X X X X I
-W W W W W W W R X W R R I I X I
-I I I I I I I X X W X X I I X X
-X X R X X C C X X W X X I I X X
-E I I I I I I X X I X X I I X X
-I I I I I X M X X X X X I I X X
-X X X X X X I X X I X X I I X X
-X I I I I I I X I I X X X I I I
+I I I I I I I C C C I W W W I I
+I I I I X X I C C C I I W W I I
+I I X I X X I X X X X X W X X I
+I I X I X X I X I X I I W W X I
+I I X X X I I X I X X W W W E I
+I I I X I I I X I I X W W W I I
+I I I X I I I X I I X I W I I I
+I X X X X X X X X X X W W W I I
+I I I I I I I X I I I W W W I I
 %
-POM(7,3)
-POP(0,8)
-POL(10,8)
+MV(4,1)
+GS(10,6)
+GS(2,2)
 %
-8,7
+7,8
