@@ -1,0 +1,20 @@
+X X X C C C C C C C C C C I I I
+R R C C X X X X X X X C C X X I
+X X C C X I I M I I X C C X X I
+X X C C X I X X X I X C C X X I
+X X C C X M X E X M X C C X X I
+X X C C X I X X X I X C C X X I
+X X C C X I I M I I X C C X X I
+X X C C X X X X X X X C C X X I
+X X X C C C C C C C C C C I I I
+%
+POP(0,8)
+EGF(1,0)
+EGF(2,0)
+RF(2,8)
+F(0,0)
+MV(10,4)
+EF(7,1)
+SC(7,7)
+%
+0,4
