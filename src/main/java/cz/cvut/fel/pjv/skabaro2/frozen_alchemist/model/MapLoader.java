@@ -76,6 +76,9 @@ public class MapLoader {
      * @return A LevelData object containing the blocks, items, and initial player position.
      */
     private static LevelData buildLevelData(String textRepresentation) {
+        // replace all line endings with '\n' for consistency across CRLF and LF
+        textRepresentation = textRepresentation.replace("\r\n", "\n");
+
         Block[] blocks = getBlocks(textRepresentation);
         Item[] items = getItems(textRepresentation);
         Position initial = getInitialPlayerPosition(textRepresentation);
@@ -108,13 +111,13 @@ public class MapLoader {
     private static Block[] getBlocks(String textRepresentation) {
         ArrayList<Block> blocks = new ArrayList<>();
         int i = 0;
-        int x = 0, y = 0; // For specifying block's position.
+        int x = 0, y = 0; // for specifying block's position
 
         while (true) {
             char code = textRepresentation.charAt(i);
 
             switch (code) {
-                case '%': return blocks.toArray(new Block[0]); // End of block declaration.
+                case '%': return blocks.toArray(new Block[0]); // end of block declaration
                 case '\n': {
                     y++;
                     x = 0;
@@ -152,12 +155,10 @@ public class MapLoader {
             char readChar = textRepresentation.charAt(i);
 
             switch (readChar) {
-                case '%': return items.toArray(new Item[0]); // End of item declaration.
+                case '%': return items.toArray(new Item[0]); // end of item declaration
                 case '\n': {
-                    // Finished reading an item, create a new item.
-                    if (name == null || x == -1 || y == -1) {
-                        throw new RuntimeException("Error reading name/x/y of entity.");
-                    }
+                    // finished reading an item, create a new item
+                    if (name == null || x == -1 || y == -1) throw new RuntimeException("Error reading name/x/y of entity.");
 
                     ItemType itemType = ItemType.fromSaveCode(name);
                     Position position = new Position(x, y);
@@ -180,7 +181,9 @@ public class MapLoader {
                     buffer.delete(0, buffer.length());
                     break;
                 }
-                default: buffer.append(readChar);
+                default: {
+                    buffer.append(readChar);
+                }
             }
 
             i++;
@@ -207,9 +210,7 @@ public class MapLoader {
                     y = Integer.parseInt(buffer.toString());
                     buffer.delete(0, buffer.length());
 
-                    if (x == -1 || y == -1) {
-                        throw new RuntimeException("Error reading player initial position declaration.");
-                    }
+                    if (x == -1 || y == -1) throw new RuntimeException("Error reading player initial position declaration.");
 
                     return new Position(x, y);
                 }
