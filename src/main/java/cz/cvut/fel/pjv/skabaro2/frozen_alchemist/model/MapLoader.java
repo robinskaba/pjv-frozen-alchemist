@@ -90,9 +90,11 @@ public class MapLoader {
      */
     private static String readLevelAsString(int level) {
         try {
-            return Files.readString(Path.of("src/main/resources/levels/level" + level + ".txt"));
-        } catch (IOException e) {
-            e.printStackTrace();
+            URL resource = MapLoader.class.getResource("/levels/level" + level + ".txt");
+            if (resource == null) throw new RuntimeException("Level file not found: /levels/level" + level + ".txt");
+            return Files.readString(Path.of(resource.toURI()));
+        } catch (IOException | URISyntaxException e) {
+            // TODO Logging
             throw new RuntimeException("Failed to read file for level " + level, e);
         }
     }

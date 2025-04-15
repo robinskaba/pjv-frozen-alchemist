@@ -9,7 +9,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.BlockType;
  * Provides utility functions for item interactions in the game.
  */
 public class ItemFunctions {
-
     /**
      * Grants the player the ability to levitate for a limited number of steps.
      *

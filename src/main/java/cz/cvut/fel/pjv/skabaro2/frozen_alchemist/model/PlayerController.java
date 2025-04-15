@@ -54,7 +54,7 @@ public class PlayerController {
     }
 
     /**
-     * Registers an function to be executed when the player enters a specific block type.
+     * Registers a function to be executed when the player enters a specific block type.
      *
      * @param blockType    The block type to trigger the function.
      * @param executedFunc The function to execute.

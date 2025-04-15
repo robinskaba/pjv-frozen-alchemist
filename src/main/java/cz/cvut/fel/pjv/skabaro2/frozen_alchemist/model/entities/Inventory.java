@@ -3,7 +3,7 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
 import java.util.*;
 
 public class Inventory {
-    private final Map<ItemType, Integer> content = new HashMap<>();
+    private Map<ItemType, Integer> content = new HashMap<>();
     private ItemType equippedItemType;
 
     public void add(ItemType itemType) {
@@ -28,8 +28,7 @@ public class Inventory {
     }
 
     public void setContent(Map<ItemType, Integer> content) {
-        this.content.clear();
-        this.content.putAll(content);
+        this.content = content;
     }
 
     public ItemType getEquippedItemType() {
