@@ -57,7 +57,7 @@ public class ProgressFileManager {
         try (Writer writer = Files.newBufferedWriter(path)) {
             gson.toJson(saveObj, writer);
         } catch (Exception e) {
-            // TODO Logger
+            // TODO Logging
             e.printStackTrace();
         }
     }
