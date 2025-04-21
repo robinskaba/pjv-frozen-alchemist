@@ -113,6 +113,7 @@ public class PlayerController {
         blockEntered(blockTypeOnPosition);
 
         // handle item pickup if an item is present at the new position
+
         Item itemOnPosition = gameMap.getItemOnPosition(newPosition);
         if (itemOnPosition != null) {
             player.getInventory().add((ItemType) itemOnPosition.getSubType());

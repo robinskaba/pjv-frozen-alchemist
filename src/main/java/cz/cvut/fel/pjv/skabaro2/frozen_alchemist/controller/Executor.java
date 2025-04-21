@@ -62,8 +62,8 @@ public class Executor {
         game = new Game(
             controls,
             this::loadEnd,
-            this::updateInventoryButtonOverlay,
-            this::getMenuData
+            new Thread(this::updateInventoryButtonOverlay), // threaded ui update so model does not wait
+            new Thread(this::getMenuData) // threaded ui update on event so model does not wait
         );
 
         gameView = new GameView(this::getMenuData);
