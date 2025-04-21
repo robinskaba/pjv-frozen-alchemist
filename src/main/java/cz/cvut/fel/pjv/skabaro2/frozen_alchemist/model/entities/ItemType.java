@@ -1,5 +1,6 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.UnknownSaveCode;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.SaveConfig;
 
 import java.util.Map;
@@ -147,6 +148,6 @@ public enum ItemType implements Savable, Storable {
         for (ItemType itemType : ItemType.values()) {
             if (itemType.getSaveConfig().getCode().equals(saveCode)) return itemType;
         }
-        return null;
+        throw new UnknownSaveCode(saveCode, EntityType.ITEM);
     }
 }

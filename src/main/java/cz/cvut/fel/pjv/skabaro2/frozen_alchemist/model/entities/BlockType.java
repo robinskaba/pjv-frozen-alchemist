@@ -1,5 +1,6 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
 
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.UnknownSaveCode;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.SaveConfig;
 
 /**
@@ -40,6 +41,6 @@ public enum BlockType implements Savable {
         for (BlockType blockType : BlockType.values()) {
             if (blockType.getSaveConfig().getCode().equals(saveCode)) return blockType;
         }
-        return null;
+        throw new UnknownSaveCode(saveCode, EntityType.BLOCK);
     }
 }
