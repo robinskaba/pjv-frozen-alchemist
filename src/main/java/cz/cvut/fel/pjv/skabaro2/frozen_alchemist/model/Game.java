@@ -78,8 +78,8 @@ public class Game {
         }
 
         // initialize the game map and player position for the new level
-        gameMap = new GameMap(levelData.getBlocks(), levelData.getItems());
-        player.setPosition(levelData.getInitialPlayerPosition());
+        gameMap = new GameMap(levelData.mapWidth(), levelData.mapHeight(), levelData.blocks(), levelData.items());
+        player.setPosition(levelData.initialPlayerPosition());
 
         playerController.updateGameMap(gameMap);
     }
@@ -119,5 +119,9 @@ public class Game {
      */
     public boolean isRunning() {
         return isRunning;
+    }
+
+    public int getMapWidth() {
+        return gameMap.getWidth();
     }
 }

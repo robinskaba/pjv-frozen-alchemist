@@ -1,17 +1,17 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view;
 
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import java.io.InputStream;
 
 /**
  * Represents the main screen of the game, managing the stage, title, icon, and fonts loaded.
  */
 public class Screen {
     private final Stage stage;
+    private final int width;
+    private final int height;
 
     /**
      * Constructs a new Screen instance.
@@ -20,13 +20,21 @@ public class Screen {
      * @param gameName              The title of the game to be displayed on the window.
      * @param gameIconRelativePath  The relative path to the game's icon image.
      */
-    public Screen(Stage stage, String gameName, String gameIconRelativePath) {
+    public Screen(
+        Stage stage,
+        int width,
+        int height,
+        String gameName,
+        String gameIconRelativePath
+    ) {
         this.stage = stage;
+        this.width = width;
+        this.height = height;
 
         this.stage.setTitle(gameName);
         this.stage.setResizable(false);
-        this.stage.setWidth(Config.getDouble("window_width"));
-        this.stage.setHeight(Config.getDouble("window_height"));
+        this.stage.setWidth(width);
+        this.stage.setHeight(height);
 
         this.stage.getIcons().add(new Image(getClass().getResourceAsStream(gameIconRelativePath)));
 
@@ -51,5 +59,13 @@ public class Screen {
     private void loadFonts() {
         // loading font (workaround around JavaFX %20 space bug)
         Font.loadFont(getClass().getResourceAsStream("/fonts/minecraft.ttf"), 12);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

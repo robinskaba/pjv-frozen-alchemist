@@ -1,4 +1,4 @@
-package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
+package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.exceptions;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.EntityType;
 

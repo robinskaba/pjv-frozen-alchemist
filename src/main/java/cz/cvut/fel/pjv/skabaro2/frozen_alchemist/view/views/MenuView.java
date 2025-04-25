@@ -1,6 +1,5 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views;
 
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
@@ -20,8 +19,8 @@ public class MenuView extends View {
      * @param backgroundImagePath The path to the background image for the menu.
      * @throws RuntimeException If the background image cannot be found at the specified path.
      */
-    public MenuView(String backgroundImagePath) {
-        super();
+    public MenuView(int width, int height, String backgroundImagePath) {
+        super(width, height);
 
         getStylesheets().add(getClass().getResource("/styles/menu_scene.css").toExternalForm());
         setupBackground(backgroundImagePath);
@@ -35,14 +34,11 @@ public class MenuView extends View {
      * @throws RuntimeException If the background image cannot be found at the specified path.
      */
     private void setupBackground(String backgroundImagePath) {
-        int windowWidth = Config.getInt("window_width");
-        int windowHeight = Config.getInt("window_height");
-
         System.out.println("Loading background image from path: " + backgroundImagePath);
         InputStream backgroundImageStream = MenuView.class.getResourceAsStream(backgroundImagePath);
         if (backgroundImageStream == null) throw new RuntimeException("Background image not found at path: " + backgroundImagePath);
         Image background = new Image(backgroundImageStream);
-        gc.drawImage(background, 0, 0, windowWidth, windowHeight);
+        gc.drawImage(background, 0, 0, width, height);
     }
 
     /**
@@ -50,15 +46,12 @@ public class MenuView extends View {
      * The box is centered horizontally and positioned near the bottom of the window.
      */
     private void setupButtonBox() {
-        int windowWidth = Config.getInt("window_width");
-        int windowHeight = Config.getInt("window_height");
-
         buttonBox = new VBox(15);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPrefWidth(250);
 
-        buttonBox.setLayoutY(windowHeight - 250);
-        buttonBox.setLayoutX((windowWidth - buttonBox.getPrefWidth()) / 2);
+        buttonBox.setLayoutX((width - buttonBox.getPrefWidth()) / 2);
+        buttonBox.setLayoutY(height - 250);
 
         this.getChildren().add(buttonBox);
     }

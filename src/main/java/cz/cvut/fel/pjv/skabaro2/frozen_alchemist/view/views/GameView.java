@@ -1,6 +1,5 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views;
 
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,8 +33,8 @@ public class GameView extends View {
      *
      * @param fetchMenuData A runnable to fetch the menu data when required.
      */
-    public GameView(Runnable fetchMenuData) {
-        super();
+    public GameView(int width, int height, Runnable fetchMenuData) {
+        super(width, height);
         getStylesheets().add(getClass().getResource("/styles/game_scene.css").toExternalForm());
 
         this.fetchMenuData = fetchMenuData;
@@ -50,7 +49,7 @@ public class GameView extends View {
      * @param renderedTextures An array of RenderedTexture objects to be drawn.
      */
     public void render(RenderedTexture[] renderedTextures) {
-        gc.clearRect(0, 0, Config.getInt("window_width"), Config.getInt("window_height"));
+        gc.clearRect(0, 0, width, height);
 
         for (RenderedTexture renderedTexture : renderedTextures) {
             Texture texture = renderedTexture.texture();
@@ -74,8 +73,8 @@ public class GameView extends View {
         mainMenuButton = new Button();
         mainMenuButton.getStyleClass().add("main-button");
         mainMenuButton.setGraphic(buttonImageView);
-        mainMenuButton.setLayoutX(Config.getInt("window_width") - 150);
-        mainMenuButton.setLayoutY(Config.getInt("window_height") - 175);
+        mainMenuButton.setLayoutX(width - 150);
+        mainMenuButton.setLayoutY(height - 175);
         mainMenuButton.setPrefWidth(size);
         mainMenuButton.setPrefHeight(size);
         mainMenuButton.setPadding(Insets.EMPTY);
@@ -101,13 +100,12 @@ public class GameView extends View {
     /**
      * Creates a menu region with the specified dimensions.
      *
-     * @param width  The width of the menu region.
      * @param height The height of the menu region.
      * @return A Region object styled as a menu.
      */
-    private Region createMenuRegion(double width, double height) {
+    private Region createMenuRegion(double height) {
         Region background = new Region();
-        background.setPrefSize(width, height);
+        background.setPrefSize(menuWidth, height);
         background.getStyleClass().add("menu");
         return background;
     }
@@ -120,11 +118,9 @@ public class GameView extends View {
      * @return A StackPane representing the menu panel.
      */
     private StackPane createMenuPanel(String title, GridPane itemGrid) {
-        double height = Config.getDouble("window_height") - 100;
-
         StackPane panel = new StackPane();
 
-        Region background = createMenuRegion(menuWidth, height);
+        Region background = createMenuRegion(height - 100);
 
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("menu-title");
@@ -146,12 +142,12 @@ public class GameView extends View {
      * @return A StackPane representing the item information panel.
      */
     private StackPane createItemInfoPanel() {
-        double width = menuWidth, height = 100;
+        int panelHeight = 100;
 
         StackPane pane = new StackPane();
-        pane.setMaxSize(width, height);
+        pane.setMaxSize(menuWidth, panelHeight);
 
-        Region background = createMenuRegion(width, height);
+        Region background = createMenuRegion(panelHeight);
 
         VBox layout = new VBox();
         layout.setAlignment(Pos.TOP_LEFT);
@@ -264,8 +260,8 @@ public class GameView extends View {
 
             // Limiting image size.
             itemImageView.setPreserveRatio(true);
-            itemImageView.setFitWidth(menuWidth / 5);
-            itemImageView.setFitHeight(menuWidth / 5);
+            itemImageView.setFitWidth((double) menuWidth / 5);
+            itemImageView.setFitHeight((double) menuWidth / 5);
 
             Button itemSlot = new Button();
             itemSlot.getStyleClass().add("menu-item");
@@ -275,8 +271,8 @@ public class GameView extends View {
             ImageView hintImageView = new ImageView(hintIcon);
 
             hintImageView.setPreserveRatio(true);
-            hintImageView.setFitWidth(menuWidth / 15);
-            hintImageView.setFitHeight(menuWidth / 15);
+            hintImageView.setFitWidth((double) menuWidth / 15);
+            hintImageView.setFitHeight((double) menuWidth / 15);
 
             Button hintButton = new Button();
             hintButton.setGraphic(hintImageView);

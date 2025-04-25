@@ -6,6 +6,8 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Block;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.BlockType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Item;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.exceptions.IllegalLevelStructure;
+import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.exceptions.IllegalMapLoaderState;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,7 +23,26 @@ import java.util.stream.Stream;
  * Responsible for creating entities (blocks, items, etc.) based on the level's text representation.
  */
 public class MapLoader {
+    static class MapStructure {
+        private final int width;
+        private final int height;
+        private final Block[] blocks;
+
+        private MapStructure(int width, int height, Block[] blocks) {
+            this.width = width;
+            this.height = height;
+            this.blocks = blocks;
+        }
+    }
+
     private static final String LEVELS = "/levels";
+    private static int allowedMapWidth = -1;
+    private static int allowedMapHeight = -1;
+
+    public static void setAllowedMapDimensions(int width, int height) {
+        allowedMapWidth = width;
+        allowedMapHeight = height;
+    }
 
     /**
      * Counts the total number of levels available in the levels directory.
@@ -76,13 +97,16 @@ public class MapLoader {
      * @return A LevelData object containing the blocks, items, and initial player position.
      */
     private static LevelData buildLevelData(String textRepresentation) {
+        if (allowedMapWidth == -1 || allowedMapHeight == -1)
+            throw new IllegalMapLoaderState("Map Loader requires allowed map width and height to be set before loading levels.");
+
         // replace all line endings with '\n' for consistency across CRLF and LF
         textRepresentation = textRepresentation.replace("\r\n", "\n");
 
-        Block[] blocks = getBlocks(textRepresentation);
+        MapStructure structure = getStructure(textRepresentation);
         Item[] items = getItems(textRepresentation);
         Position initial = getInitialPlayerPosition(textRepresentation);
-        return new LevelData(blocks, items, initial);
+        return new LevelData(structure.width, structure.height, structure.blocks, items, initial);
     }
 
     /**
@@ -108,18 +132,32 @@ public class MapLoader {
      * @param textRepresentation The text representation of the level.
      * @return An array of Block objects.
      */
-    private static Block[] getBlocks(String textRepresentation) {
+    private static MapStructure getStructure(String textRepresentation) {
         ArrayList<Block> blocks = new ArrayList<>();
         int i = 0;
         int x = 0, y = 0; // for specifying block's position
+        int width = -1;
 
         while (true) {
             char code = textRepresentation.charAt(i);
 
             switch (code) {
-                case '%': return blocks.toArray(new Block[0]); // end of block declaration
+                case '%': {
+                    // end of blocks declaration
+                    if (width != allowedMapWidth || y != allowedMapHeight) throw new IllegalLevelStructure("Level dimensions do not equal set values.");
+
+                    return new MapStructure(
+                        width,
+                        y,
+                        blocks.toArray(new Block[0])
+                    );
+                }
                 case '\n': {
                     y++;
+
+                    if (width == -1) width = x;
+                    else if (x != width) throw new IllegalLevelStructure("Width of rows of blocks is inconsistent.");
+
                     x = 0;
                     break;
                 }
@@ -159,6 +197,7 @@ public class MapLoader {
                 case '\n': {
                     // finished reading an item, create a new item
                     if (name == null || x == -1 || y == -1) throw new RuntimeException("Error reading name/x/y of entity.");
+                    if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Items can not be placed outside of the map.");
 
                     ItemType itemType = ItemType.fromSaveCode(name);
                     Position position = new Position(x, y);
@@ -211,6 +250,7 @@ public class MapLoader {
                     buffer.delete(0, buffer.length());
 
                     if (x == -1 || y == -1) throw new RuntimeException("Error reading player initial position declaration.");
+                    if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Player can not be positioned outside of the map.");
 
                     return new Position(x, y);
                 }

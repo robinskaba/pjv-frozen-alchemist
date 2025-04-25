@@ -6,7 +6,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Inventory;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.Game;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.*;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.common.GameAlert;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.*;
@@ -33,13 +32,14 @@ public class Executor {
     public Executor(Stage stage) {
         this.stage = stage;
 
-        screen = new Screen(stage, Config.getString("title"), "/ui/game_icon.png");
+        screen = new Screen(stage, 1038, 612, "Frozen Alchemist", "/ui/game_icon.png");
+        MapLoader.setAllowedMapDimensions(16, 9);
 
         loadLobby();
     }
 
     private void loadLobby() {
-        MenuView lobby = new MenuView("/ui/lobby_background.png");
+        MenuView lobby = new MenuView(screen.getWidth(), screen.getHeight(), "/ui/lobby_background.png");
         lobby.addButton("Play Game", this::loadGame);
         lobby.addButton("Reset Progress", this::resetProgress);
 
@@ -51,8 +51,8 @@ public class Executor {
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                RenderedTexture[] renderedTextures = getRenderedData(game.getEntities());
-                gameView.render(renderedTextures);
+            RenderedTexture[] renderedTextures = getRenderedData(game.getEntities(), game.getMapWidth());
+            gameView.render(renderedTextures);
             }
         };
 
@@ -66,7 +66,7 @@ public class Executor {
             new Thread(this::getMenuData) // threaded ui update on event so model does not wait
         );
 
-        gameView = new GameView(this::getMenuData);
+        gameView = new GameView(screen.getWidth(), screen.getHeight(), this::getMenuData);
         Scene gameScene = new Scene(gameView);
 
         // bind registering keystrokes
@@ -87,12 +87,12 @@ public class Executor {
     }
 
     private void loadEnd() {
-        MenuView endView = new MenuView("/ui/game_won_background.png");
+        MenuView endView = new MenuView(screen.getWidth(), screen.getHeight(), "/ui/game_won_background.png");
         Scene scene = new Scene(endView);
         stage.setScene(scene);
     }
 
-    public RenderedTexture[] getRenderedData(Entity[] entities) {
+    public RenderedTexture[] getRenderedData(Entity[] entities, int widthInTiles) {
         List<RenderedTexture> renderedTextures = new LinkedList<>();
 
         for (Entity entity : entities) {
@@ -100,7 +100,7 @@ public class Executor {
             Texture texture = TextureManager.getTexture(subtype);
 
             // calculating offset because some textures are too large
-            int tileSizeInPixels = 64;
+            int tileSizeInPixels = screen.getWidth() / widthInTiles;
             Position position = entity.getPosition();
 
             double offset = texture.getScale() < 1f ?

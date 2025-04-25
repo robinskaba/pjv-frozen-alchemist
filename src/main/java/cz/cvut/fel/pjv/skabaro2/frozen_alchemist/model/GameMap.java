@@ -5,7 +5,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Block;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.EntityType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Item;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +16,21 @@ import java.util.List;
 public class GameMap {
     private final ArrayList<Entity> entities = new ArrayList<>();
 
-    private final int width = Config.getInt("width_in_tiles");
-    private final int height = Config.getInt("height_in_tiles");
+    private final int width;
+    private final int height;
 
     /**
      * Constructs a new GameMap with the specified blocks and items.
      *
+     * @param width Width of map in tiles (blocks).
+     * @param height Height of map in tiles (blocks).
      * @param blocks Array of blocks to be added to the map.
      * @param items  Array of items to be added to the map.
      */
-    public GameMap(Block[] blocks, Item[] items) {
+    public GameMap(int width, int height, Block[] blocks, Item[] items) {
+        this.width = width;
+        this.height = height;
+
         entities.addAll(List.of(blocks));
         entities.addAll(List.of(items));
     }
