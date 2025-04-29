@@ -5,7 +5,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.PlayerController;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.*;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,10 +16,11 @@ public class PlayerControllerTests {
 
     @BeforeEach
     public void setup() {
+        int width = 16;
+        int height = 9;
+
         player = new Player(new Position(5, 5));
 
-        int width = Config.getInt("width_in_tiles");
-        int height = Config.getInt("height_in_tiles");
         Block[] blocks = new Block[width * height];
         int index = 0;
         for (int x = 0; x <width; x++) {
@@ -29,7 +29,7 @@ public class PlayerControllerTests {
             }
         }
 
-        gameMap = new GameMap(blocks, new Item[0]);
+        gameMap = new GameMap(width, height, blocks, new Item[0]);
         Controls controls = new Controls();
 
         playerController = new PlayerController(

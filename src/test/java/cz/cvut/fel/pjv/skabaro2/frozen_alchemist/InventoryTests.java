@@ -1,7 +1,6 @@
 package cz.cvut.fel.pjv.skabaro2.frozen_alchemist;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Inventory;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Item;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -6,7 +6,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Block;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.BlockType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Item;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,9 @@ public class GameMapTests {
 
     @BeforeEach
     public void setup() {
-        int width = Config.getInt("width_in_tiles");
-        int height = Config.getInt("height_in_tiles");
+        int width = 16;
+        int height = 9;
+
         Block[] blocks = new Block[width * height];
         int index = 0;
         for (int x = 0; x <width; x++) {
@@ -32,7 +32,7 @@ public class GameMapTests {
             items[x] = new Item(ItemType.PotionOfFrost, new Position(x, 0));
         }
 
-        gameMap = new GameMap(blocks, items);
+        gameMap = new GameMap(width, height, blocks, items);
     }
 
     @Test

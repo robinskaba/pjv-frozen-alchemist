@@ -4,7 +4,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.GameMap;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.ItemFunctions;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.*;
-import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.utils.Config;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +14,8 @@ public class ItemFunctionsTests {
 
     @BeforeEach
     public void setup() {
-        int width = Config.getInt("width_in_tiles");
-        int height = Config.getInt("height_in_tiles");
+        int width = 16;
+        int height = 19;
 
         Block[] blocks = new Block[width * height];
         int index = 0;
@@ -26,7 +25,7 @@ public class ItemFunctionsTests {
             }
         }
 
-        gameMap = new GameMap(blocks, new Item[0]);
+        gameMap = new GameMap(width, height, blocks, new Item[0]);
         player = new Player(new Position(0, 0));
     }
 
