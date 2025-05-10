@@ -33,10 +33,11 @@ public class FrozenAlchemist extends Application {
      * @param args Command-line arguments passed to the application.
      */
     public static void main(String[] args) {
+        System.out.println(args.length);
         if (args.length > 0) {
             setUpLogger(args[0]);
         } else {
-            setUpLogger("OFF");
+            setUpLogger("off");
         }
 
         launch(args);
