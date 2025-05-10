@@ -13,12 +13,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Manages saving and loading game progress to and from a JSON file.
  * Handles serialization and deserialization of game state, including level, inventory, and map data.
  */
 public class ProgressFileManager {
+    private final static Logger LOGGER = Logger.getLogger(ProgressFileManager.class.getName());
+
     private final static String PROGRESS_FILE_URL = "progress.json"; // changes, so outside resources!!
 
     private final static String LEVEL_KEY = "level";
@@ -42,6 +45,8 @@ public class ProgressFileManager {
      * @param gameMap  The current game map.
      */
     public static void save(int level, Player player, GameMap gameMap) {
+        LOGGER.info("Saving progress...");
+
         JsonObject levelObj = buildLevelSave(level);
         JsonObject inventoryObj = buildInventorySave(player.getInventory());
         JsonObject mapObj = buildMapSave(gameMap, player);
@@ -57,8 +62,10 @@ public class ProgressFileManager {
         try (Writer writer = Files.newBufferedWriter(path)) {
             gson.toJson(saveObj, writer);
         } catch (Exception e) {
-            // TODO Logging
-            e.printStackTrace();
+            LOGGER.warning("Failed to save progress to a file.");
+            throw new RuntimeException("Failed to save progress file at " + PROGRESS_FILE_URL, e);
+        } finally {
+            LOGGER.info("Progress saved successfully.");
         }
     }
 
@@ -94,6 +101,8 @@ public class ProgressFileManager {
             inventoryObj.add(String.valueOf(i), itemObj);
             i++;
         }
+
+        LOGGER.info("Inventory save built.");
         return inventoryObj;
     }
 
@@ -142,6 +151,7 @@ public class ProgressFileManager {
         JsonObject mapObj = new JsonObject();
         mapObj.addProperty("text", textMapBuilder.toString());
 
+        LOGGER.info("Map save built.");
         return mapObj;
     }
 
@@ -178,8 +188,12 @@ public class ProgressFileManager {
             mapString = mapObj.get("text").getAsString();
 
         } catch (IOException e) {
+            LOGGER.warning("Failed to load progress from a file.");
             throw new RuntimeException("Failed to load progress file at " + PROGRESS_FILE_URL, e);
+        } finally {
+            LOGGER.info("Progress loaded successfully.");
         }
+
         return new ProgressSave(level, inventoryContent, mapString);
     }
 
@@ -192,7 +206,10 @@ public class ProgressFileManager {
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
+            LOGGER.warning("Failed to delete progress file.");
             throw new RuntimeException("Failed to delete progress file at " + PROGRESS_FILE_URL, e);
+        } finally {
+            LOGGER.info("Progress reset successfully.");
         }
     }
 }

@@ -8,11 +8,14 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Entity;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Player;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Represents the main game logic and state management for the Frozen Alchemist game.
  */
 public class Game {
+    private final static Logger LOGGER = Logger.getLogger(Game.class.getName());
+
     private final Runnable onGameEnd;
     private final Runnable onItemUse;
     private final Runnable onItemPickup;
@@ -40,14 +43,22 @@ public class Game {
         this.onItemUse = onItemUse;
         this.onItemPickup = onItemPickup;
 
+        if(controls == null || onGameEnd == null || onItemUse == null || onItemPickup == null) {
+            LOGGER.warning("Game initialized without controls or a callback.");
+        }
+
         // load progress if available and initialize the game state
         if (progressSave != null) {
             currentLevel = progressSave.getLevel() - 1;
             player.getInventory().setContent(progressSave.getInventoryContent());
+
+            LOGGER.info("Game used a progress save.");
         }
 
         setupPlayerController();
         loadNextLevel();
+
+        LOGGER.info("Game initialized successfully.");
     }
 
     /**
@@ -82,6 +93,8 @@ public class Game {
         player.setPosition(levelData.initialPlayerPosition());
 
         playerController.updateGameMap(gameMap);
+
+        LOGGER.info(String.format("Level %d loaded into game.", currentLevel));
     }
 
     /**

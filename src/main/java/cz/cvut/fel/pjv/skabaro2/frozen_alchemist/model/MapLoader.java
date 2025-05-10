@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -34,6 +35,8 @@ public class MapLoader {
             this.blocks = blocks;
         }
     }
+
+    private static final Logger LOGGER = Logger.getLogger(MapLoader.class.getName());
 
     private static final String LEVELS = "/levels";
     private static int allowedMapWidth = -1;
@@ -100,12 +103,18 @@ public class MapLoader {
         if (allowedMapWidth == -1 || allowedMapHeight == -1)
             throw new IllegalMapLoaderState("Map Loader requires allowed map width and height to be set before loading levels.");
 
-        // replace all line endings with '\n' for consistency across CRLF and LF
+        // replace all line endings with '\n' for consistency across CRLF and LF (caused issues)
         textRepresentation = textRepresentation.replace("\r\n", "\n");
 
         MapStructure structure = getStructure(textRepresentation);
         Item[] items = getItems(textRepresentation);
         Position initial = getInitialPlayerPosition(textRepresentation);
+
+        LOGGER.info(String.format(
+            "Loaded level with dimensions: %dx%d, initial player position: %s, number of blocks: %d, number of items: %d.",
+            structure.width, structure.height, initial, structure.blocks.length, items.length
+        ));
+
         return new LevelData(structure.width, structure.height, structure.blocks, items, initial);
     }
 
@@ -116,12 +125,13 @@ public class MapLoader {
      * @return The text representation of the level.
      */
     private static String readLevelAsString(int level) {
+        LOGGER.info("Reading level " + level + " as string from file.");
+
         try {
             URL resource = MapLoader.class.getResource("/levels/level" + level + ".txt");
             if (resource == null) throw new RuntimeException("Level file not found: /levels/level" + level + ".txt");
             return Files.readString(Path.of(resource.toURI()));
         } catch (IOException | URISyntaxException e) {
-            // TODO Logging
             throw new RuntimeException("Failed to read file for level " + level, e);
         }
     }
@@ -145,6 +155,11 @@ public class MapLoader {
                 case '%': {
                     // end of blocks declaration
                     if (width != allowedMapWidth || y != allowedMapHeight) throw new IllegalLevelStructure("Level dimensions do not equal set values.");
+
+                    LOGGER.info(String.format(
+                        "Parsed blocks: %d, width: %d, height: %d.",
+                        blocks.size(), width, y
+                    ));
 
                     return new MapStructure(
                         width,
@@ -203,6 +218,12 @@ public class MapLoader {
                     Position position = new Position(x, y);
                     Item newItem = new Item(itemType, position);
                     items.add(newItem);
+
+                    LOGGER.info(String.format(
+                            "Parsed item: %s, position: %s.",
+                            itemType.getName(), new Position(x, y)
+                    ));
+
                     break;
                 }
                 case '(': {
@@ -251,6 +272,11 @@ public class MapLoader {
 
                     if (x == -1 || y == -1) throw new RuntimeException("Error reading player initial position declaration.");
                     if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Player can not be positioned outside of the map.");
+
+                    LOGGER.info(String.format(
+                        "Parsed initial player position: %s.",
+                        new Position(x, y)
+                    ));
 
                     return new Position(x, y);
                 }
