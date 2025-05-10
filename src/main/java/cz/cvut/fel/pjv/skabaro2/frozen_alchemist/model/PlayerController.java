@@ -123,6 +123,7 @@ public class PlayerController {
             LOGGER.fine("Picked up item: " + itemOnPosition.getSubType());
             player.getInventory().add((ItemType) itemOnPosition.getSubType());
             gameMap.remove(itemOnPosition);
+
             onItemPickup.run();
         }
     }
@@ -160,6 +161,7 @@ public class PlayerController {
         if (use != null && use.get()) {
             LOGGER.info("Using " + equippedItemType);
             player.getInventory().remove(equippedItemType, 1);
+
             onItemUse.run();
         }
     }

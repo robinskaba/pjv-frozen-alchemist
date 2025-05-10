@@ -12,6 +12,7 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.*;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views.GameView;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views.MenuView;
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -67,8 +68,8 @@ public class Executor {
         game = new Game(
             controls,
             this::loadEnd, // triggered when game is won
-            new Thread(this::updateInventoryButtonOverlay), // threaded ui update so model does not wait
-            new Thread(this::getMenuData) // threaded ui update on event so model does not wait
+            this::updateInventoryButtonOverlay,
+            this::getMenuData
         );
 
         gameView = new GameView(screen.getWidth(), screen.getHeight(), this::getMenuData);
