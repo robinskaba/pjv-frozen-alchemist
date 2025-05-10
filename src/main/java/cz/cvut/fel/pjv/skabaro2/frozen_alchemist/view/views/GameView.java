@@ -10,6 +10,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+import java.io.InputStream;
+import java.util.Objects;
+import java.util.logging.Logger;
+
 /**
  * Represents the main game view, including menus, inventory, crafting, and rendering logic.
  */
@@ -28,6 +32,8 @@ public class GameView extends View {
     private MenuData menuData;
     private final Runnable fetchMenuData;
 
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     /**
      * Constructs a new GameView instance.
      *
@@ -35,7 +41,7 @@ public class GameView extends View {
      */
     public GameView(int width, int height, Runnable fetchMenuData) {
         super(width, height);
-        getStylesheets().add(getClass().getResource("/styles/game_scene.css").toExternalForm());
+        getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/game_scene.css")).toExternalForm());
 
         this.fetchMenuData = fetchMenuData;
         setupInventoryButton();
@@ -66,7 +72,12 @@ public class GameView extends View {
     private void setupInventoryButton() {
         double size = 100;
 
-        Image defaultImage = new Image(GameView.class.getResourceAsStream("/ui/action_button.png"));
+        InputStream inputStream = getClass().getResourceAsStream("/ui/action_button.png");
+        if (inputStream == null) {
+            LOGGER.warning("Failed to load action button image.");
+            inputStream = getClass().getResourceAsStream("/textures/missing_texture.png");
+        }
+        Image defaultImage = new Image(Objects.requireNonNull(inputStream));
 
         ImageView buttonImageView = new ImageView(defaultImage);
 
@@ -249,7 +260,7 @@ public class GameView extends View {
     private void updateMenu(MenuItem[] items, GridPane menuGrid) {
         int i = 0;
 
-        Image hintIcon = new Image(getClass().getResourceAsStream("/ui/hint.png"));
+        Image hintIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/ui/hint.png")));
 
         for (MenuItem menuItem : items) {
             Image itemImage = menuItem.image();
@@ -303,6 +314,8 @@ public class GameView extends View {
 
         updateMenu(menuData.craftingData(), craftingGridPane);
         updateMenu(menuData.inventoryData(), inventoryGridPane);
+
+        LOGGER.finer("Updated menus with new data.");
     }
 
     /**

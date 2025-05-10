@@ -6,11 +6,14 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.ItemType;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.Texture;
 
 import java.util.EnumMap;
+import java.util.logging.Logger;
 
 public class TextureManager {
     private static final EnumMap<BlockType, Texture> blockTextures = new EnumMap<>(BlockType.class);
     private static final EnumMap<ItemType, Texture> itemTextures = new EnumMap<>(ItemType.class);
     private static final EnumMap<Direction, Texture> playerOrientedTextures = new EnumMap<>(Direction.class);
+
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public static void load() {
         for (BlockType blockType : BlockType.values()) {
@@ -28,6 +31,8 @@ public class TextureManager {
         playerOrientedTextures.put(Direction.DOWN, new Texture("player_down.png", playerSpriteScale));
         playerOrientedTextures.put(Direction.RIGHT, new Texture("player_right.png", playerSpriteScale));
         playerOrientedTextures.put(Direction.LEFT, new Texture("player_left.png", playerSpriteScale));
+
+        LOGGER.info("Textures loaded.");
     }
 
     public static Texture getTexture(Object subtype) {
@@ -35,6 +40,7 @@ public class TextureManager {
         if (subtype instanceof ItemType) return itemTextures.get(subtype);
         if (subtype instanceof Direction) return playerOrientedTextures.get(subtype);
 
+        LOGGER.warning("Unknown subtype when loading texture: " + subtype);
         return new Texture("missing_texture.png", 1f);
     }
 }

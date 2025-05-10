@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * Handles serialization and deserialization of game state, including level, inventory, and map data.
  */
 public class ProgressFileManager {
-    private final static Logger LOGGER = Logger.getLogger(ProgressFileManager.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private final static String PROGRESS_FILE_URL = "progress.json"; // changes, so outside resources!!
 
@@ -102,7 +102,7 @@ public class ProgressFileManager {
             i++;
         }
 
-        LOGGER.info("Inventory save built.");
+        LOGGER.finest("Inventory save built.");
         return inventoryObj;
     }
 
@@ -151,7 +151,7 @@ public class ProgressFileManager {
         JsonObject mapObj = new JsonObject();
         mapObj.addProperty("text", textMapBuilder.toString());
 
-        LOGGER.info("Map save built.");
+        LOGGER.finest("Map save built.");
         return mapObj;
     }
 

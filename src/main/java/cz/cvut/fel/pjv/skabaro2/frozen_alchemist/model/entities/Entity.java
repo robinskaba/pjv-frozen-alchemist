@@ -44,6 +44,7 @@ public abstract class Entity {
         return "Entity{" +
                 "type=" + entityType +
                 ", position=" + position +
+                ", subType=" + getSubType() +
                 '}';
     }
 }

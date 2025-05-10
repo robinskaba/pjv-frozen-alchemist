@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class Executor {
     private final Stage stage;
@@ -28,6 +29,8 @@ public class Executor {
 
     private Game game;
     private GameView gameView;
+
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public Executor(Stage stage) {
         this.stage = stage;
@@ -45,6 +48,8 @@ public class Executor {
 
         Scene scene = new Scene(lobby);
         screen.setScene(scene);
+
+        LOGGER.info("Loaded lobby.");
     }
 
     private void loadGame() {
@@ -61,7 +66,7 @@ public class Executor {
 
         game = new Game(
             controls,
-            this::loadEnd,
+            this::loadEnd, // triggered when game is won
             new Thread(this::updateInventoryButtonOverlay), // threaded ui update so model does not wait
             new Thread(this::getMenuData) // threaded ui update on event so model does not wait
         );
@@ -84,12 +89,16 @@ public class Executor {
             gameLoop.start();
             stage.setScene(gameScene);
         }
+
+        LOGGER.info("Loaded game.");
     }
 
     private void loadEnd() {
         MenuView endView = new MenuView(screen.getWidth(), screen.getHeight(), "/ui/game_won_background.png");
         Scene scene = new Scene(endView);
         stage.setScene(scene);
+
+        LOGGER.info("Loaded end.");
     }
 
     public RenderedTexture[] getRenderedData(Entity[] entities, int widthInTiles) {
@@ -102,14 +111,12 @@ public class Executor {
             // calculating offset because some textures are too large
             int tileSizeInPixels = screen.getWidth() / widthInTiles;
             Position position = entity.getPosition();
-
             double offset = texture.getScale() < 1f ?
                     (tileSizeInPixels - texture.getScale() * tileSizeInPixels) / 2f : 0;
             double x = position.getX() * tileSizeInPixels + offset;
             double y = position.getY() * tileSizeInPixels + offset;
 
             PixelPosition pixelPosition = new PixelPosition(x, y);
-
             renderedTextures.add(new RenderedTexture(texture, pixelPosition));
         }
 
@@ -170,6 +177,8 @@ public class Executor {
 
                     // refresh ui
                     getMenuData();
+
+                    LOGGER.info("Crafted " + itemType.getName() + ".");
                 };
                 Runnable showItemInfo = () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription());
 
@@ -192,6 +201,8 @@ public class Executor {
     }
 
     private void resetProgress() {
+        LOGGER.info("Triggering progress reset.");
+
         ProgressFileManager.resetProgress();
         GameAlert gameAlert = new GameAlert(stage.getScene(), Alert.AlertType.CONFIRMATION);
         gameAlert.setTitle("Progress Reset");

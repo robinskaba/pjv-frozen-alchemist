@@ -6,6 +6,7 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 /**
  * Controls the player's interactions with the game world, including movement, item usage,
@@ -18,6 +19,8 @@ public class PlayerController {
     private final Player player;
 
     private GameMap gameMap;
+
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * Constructs a PlayerController instance.
@@ -79,6 +82,8 @@ public class PlayerController {
      * @param direction The direction to move the player.
      */
     public void movePlayer(Direction direction) {
+        LOGGER.finest("Moving player in direction: " + direction);
+
         player.setDirection(direction);
 
         Position currentPosition = player.getPosition();
@@ -113,9 +118,9 @@ public class PlayerController {
         blockEntered(blockTypeOnPosition);
 
         // handle item pickup if an item is present at the new position
-
         Item itemOnPosition = gameMap.getItemOnPosition(newPosition);
         if (itemOnPosition != null) {
+            LOGGER.fine("Picked up item: " + itemOnPosition.getSubType());
             player.getInventory().add((ItemType) itemOnPosition.getSubType());
             gameMap.remove(itemOnPosition);
             onItemPickup.run();
@@ -126,6 +131,8 @@ public class PlayerController {
      * Uses the currently equipped item, applying its effect to the game map or player.
      */
     private void useItem() {
+        LOGGER.fine("Attempting to use item");
+
         // fetches item type of equipped item
         ItemType equippedItemType = player.getInventory().getEquippedItemType();
         if (equippedItemType == null) return;
@@ -151,6 +158,7 @@ public class PlayerController {
 
         // apply the item's effect and remove it from the inventory if used successfully (return of true)
         if (use != null && use.get()) {
+            LOGGER.info("Using " + equippedItemType);
             player.getInventory().remove(equippedItemType, 1);
             onItemUse.run();
         }

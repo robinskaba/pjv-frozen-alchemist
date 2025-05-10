@@ -2,6 +2,8 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities;
 
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 
+import java.util.logging.Logger;
+
 /**
  * Represents the player in the game.
  * The player has an inventory, can levitate for a limited number of steps, and has a direction in which he is facing.
@@ -10,6 +12,8 @@ public class Player extends Entity {
     private final Inventory inventory = new Inventory();
     private int levitatingStepsLeft = 0;
     private Direction direction = Direction.RIGHT;
+
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * Constructs a new Player object with the specified position.
@@ -33,6 +37,7 @@ public class Player extends Entity {
      * Decreases the number of levitation steps left by one.
      */
     public void useLevitationStep() {
+        LOGGER.finest("Player levitating step used");
         levitatingStepsLeft--;
     }
 

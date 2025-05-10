@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * Represents a menu view in the game, including a background image and a vertical box for buttons.
@@ -22,7 +23,7 @@ public class MenuView extends View {
     public MenuView(int width, int height, String backgroundImagePath) {
         super(width, height);
 
-        getStylesheets().add(getClass().getResource("/styles/menu_scene.css").toExternalForm());
+        getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/menu_scene.css")).toExternalForm());
         setupBackground(backgroundImagePath);
         setupButtonBox();
     }
@@ -34,7 +35,6 @@ public class MenuView extends View {
      * @throws RuntimeException If the background image cannot be found at the specified path.
      */
     private void setupBackground(String backgroundImagePath) {
-        System.out.println("Loading background image from path: " + backgroundImagePath);
         InputStream backgroundImageStream = MenuView.class.getResourceAsStream(backgroundImagePath);
         if (backgroundImageStream == null) throw new RuntimeException("Background image not found at path: " + backgroundImagePath);
         Image background = new Image(backgroundImageStream);

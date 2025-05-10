@@ -4,6 +4,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
+import java.util.Objects;
+
 /**
  * Represents a base view in the game, providing a canvas for rendering and common styling.
  */
@@ -20,7 +22,7 @@ public class View extends Pane {
         this.width = width;
         this.height = height;
 
-        getStylesheets().add(getClass().getResource("/styles/general.css").toExternalForm());
+        getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/general.css")).toExternalForm());
 
         Canvas canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();

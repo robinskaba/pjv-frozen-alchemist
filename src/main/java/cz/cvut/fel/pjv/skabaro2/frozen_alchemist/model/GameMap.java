@@ -8,12 +8,15 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Represents the game map, which contains entities such as blocks and items.
  * Provides methods to interact with and manage entities on the map.
  */
 public class GameMap {
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     private final ArrayList<Entity> entities = new ArrayList<>();
 
     private final int width;
@@ -33,6 +36,8 @@ public class GameMap {
 
         entities.addAll(List.of(blocks));
         entities.addAll(List.of(items));
+
+        LOGGER.fine("GameMap initialized with " + blocks.length + " blocks and " + items.length + " items.");
     }
 
     /**
@@ -86,6 +91,7 @@ public class GameMap {
      * @param entity The entity to remove.
      */
     public void remove(Entity entity) {
+        LOGGER.finer("Removing entity " + entity + " from map.");
         entities.remove(entity);
     }
 
@@ -95,6 +101,7 @@ public class GameMap {
      * @param entity The entity to add.
      */
     public void add(Entity entity) {
+        LOGGER.finer("Adding entity " + entity + " to map.");
         entities.add(entity);
     }
 

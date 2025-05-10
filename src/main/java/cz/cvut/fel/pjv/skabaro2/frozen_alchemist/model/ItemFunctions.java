@@ -5,10 +5,14 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.Block;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.entities.BlockType;
 
+import java.util.logging.Logger;
+
 /**
  * Provides utility functions for item interactions in the game.
  */
 public class ItemFunctions {
+    public static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     /**
      * Grants the player the ability to levitate for a limited number of steps.
      *
@@ -16,6 +20,8 @@ public class ItemFunctions {
      * @return True if the levitation was successfully granted.
      */
     public static boolean grantLevitation(Player player) {
+        LOGGER.finer("Player granted levitation");
+
         player.setLevitationSteps(2);
         return true;
     }
@@ -34,6 +40,8 @@ public class ItemFunctions {
         gameMap.remove(blockOnPosition);
         gameMap.add(new Block(BlockType.FloorBlock, position));
 
+        LOGGER.finer("Block melted at position: " + position);
+
         return true;
     }
 
@@ -51,6 +59,8 @@ public class ItemFunctions {
         gameMap.remove(blockOnPosition);
         gameMap.add(new Block(BlockType.FloorBlock, position));
 
+        LOGGER.finer("Block frozen at position: " + position);
+
         return true;
     }
 
@@ -67,6 +77,8 @@ public class ItemFunctions {
 
         gameMap.remove(blockOnPosition);
         gameMap.add(new Block(BlockType.FloorBlock, position));
+
+        LOGGER.finer("Block pulverized at position: " + position);
 
         return true;
     }

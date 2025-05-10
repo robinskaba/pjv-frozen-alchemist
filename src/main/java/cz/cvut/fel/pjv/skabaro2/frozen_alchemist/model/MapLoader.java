@@ -36,7 +36,7 @@ public class MapLoader {
         }
     }
 
-    private static final Logger LOGGER = Logger.getLogger(MapLoader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static final String LEVELS = "/levels";
     private static int allowedMapWidth = -1;
@@ -45,6 +45,8 @@ public class MapLoader {
     public static void setAllowedMapDimensions(int width, int height) {
         allowedMapWidth = width;
         allowedMapHeight = height;
+
+        LOGGER.fine(String.format("Allowed map dimensions set to %dx%d.", width, height));
     }
 
     /**
@@ -125,7 +127,7 @@ public class MapLoader {
      * @return The text representation of the level.
      */
     private static String readLevelAsString(int level) {
-        LOGGER.info("Reading level " + level + " as string from file.");
+        LOGGER.finer("Reading level " + level + " as string from file.");
 
         try {
             URL resource = MapLoader.class.getResource("/levels/level" + level + ".txt");
@@ -156,7 +158,7 @@ public class MapLoader {
                     // end of blocks declaration
                     if (width != allowedMapWidth || y != allowedMapHeight) throw new IllegalLevelStructure("Level dimensions do not equal set values.");
 
-                    LOGGER.info(String.format(
+                    LOGGER.finest(String.format(
                         "Parsed blocks: %d, width: %d, height: %d.",
                         blocks.size(), width, y
                     ));
@@ -219,7 +221,7 @@ public class MapLoader {
                     Item newItem = new Item(itemType, position);
                     items.add(newItem);
 
-                    LOGGER.info(String.format(
+                    LOGGER.finest(String.format(
                             "Parsed item: %s, position: %s.",
                             itemType.getName(), new Position(x, y)
                     ));
@@ -273,7 +275,7 @@ public class MapLoader {
                     if (x == -1 || y == -1) throw new RuntimeException("Error reading player initial position declaration.");
                     if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Player can not be positioned outside of the map.");
 
-                    LOGGER.info(String.format(
+                    LOGGER.finest(String.format(
                         "Parsed initial player position: %s.",
                         new Position(x, y)
                     ));

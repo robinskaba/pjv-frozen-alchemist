@@ -5,6 +5,8 @@ import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 /**
  * Represents the main screen of the game, managing the stage, title, icon, and fonts loaded.
  */
@@ -36,7 +38,7 @@ public class Screen {
         this.stage.setWidth(width);
         this.stage.setHeight(height);
 
-        this.stage.getIcons().add(new Image(getClass().getResourceAsStream(gameIconRelativePath)));
+        this.stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream(gameIconRelativePath))));
 
         loadFonts();
 

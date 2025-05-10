@@ -2,6 +2,7 @@ package cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Handles the mapping of keys to functions and tracks the currently active keys.
@@ -10,6 +11,8 @@ import java.util.Map;
 public class Controls {
     private final Map<String, Boolean> currentlyActiveKeys = new HashMap<>(); // held down keys
     private final Map<String, Runnable> boundFunctions = new HashMap<>(); // bound functions
+
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * Handles the event of a key being pressed.
@@ -44,6 +47,8 @@ public class Controls {
     public void bindFunction(String key, Runnable runnable) {
         if (boundFunctions.containsKey(key)) return; // prevent multiple functions for one key.
         boundFunctions.put(key, runnable);
+
+        LOGGER.finer(String.format("Function bound to key: %s", key));
     }
 
     /**
@@ -54,5 +59,7 @@ public class Controls {
     private void handleKey(String key) {
         Runnable func = boundFunctions.get(key);
         if (func != null) func.run();
+
+        LOGGER.finest(String.format("Handling function bound to key: %s", key));
     }
 }
