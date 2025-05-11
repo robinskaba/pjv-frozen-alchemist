@@ -6,7 +6,7 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.model.data.Position;
  * Represents a block entity in the game, which is a specific type of entity with a block type.
  */
 public class Block extends Entity {
-    private final BlockType blockType; // The type of the block.
+    private final BlockType blockType;
 
     /**
      * Constructs a new Block object.

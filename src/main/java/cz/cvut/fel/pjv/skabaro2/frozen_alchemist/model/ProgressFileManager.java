@@ -53,15 +53,16 @@ public class ProgressFileManager {
     public static void save(int level, Player player, GameMap gameMap) {
         LOGGER.info("Saving progress...");
 
+        // building base json components
         JsonObject levelObj = buildLevelSave(level);
         JsonObject inventoryObj = buildInventorySave(player.getInventory());
         JsonObject mapObj = buildMapSave(gameMap, player);
-
         JsonObject saveObj = new JsonObject();
         saveObj.add(LEVEL_KEY, levelObj);
         saveObj.add(INVENTORY_KEY, inventoryObj);
         saveObj.add(MAP_KEY, mapObj);
 
+        // saving using gson
         Gson gson = new Gson();
         Path path = Paths.get(PROGRESS_FILE_URL);
 
@@ -100,6 +101,7 @@ public class ProgressFileManager {
             ItemType itemType = item.getKey();
             Integer amount = item.getValue();
 
+            // building json object for an item in the inventory
             JsonObject itemObj = new JsonObject();
             itemObj.addProperty(ITEM_OBJ_CODE_KEY, itemType.getSaveConfig().code());
             itemObj.addProperty(ITEM_OBJ_AMOUNT_KEY, amount);
@@ -123,25 +125,33 @@ public class ProgressFileManager {
         StringBuilder textMapBuilder = new StringBuilder();
 
         // build blocks: format CODE + SPACE + CODE ... \n
+        // iterating over game map positions, so it's easy to format it in txt format
         for (int y = 0; y < gameMap.getHeight(); y++) {
             for (int x = 0; x < gameMap.getWidth(); x++) {
+                // fetching save code based on the block
                 Block block = gameMap.getBlockOnPosition(new Position(x, y));
                 BlockType blockType = (BlockType) block.getSubType();
                 String code = blockType.getSaveConfig().code();
+
                 textMapBuilder.append(String.format("%s ", code));
             }
-            textMapBuilder.deleteCharAt(textMapBuilder.length() - 1); // remove last space.
-            textMapBuilder.append("\n");
+            textMapBuilder.deleteCharAt(textMapBuilder.length() - 1); // remove last space
+            textMapBuilder.append("\n"); // new row
         }
         textMapBuilder.append("%\n"); // end of blocks
 
         // build items: format CODE + SPACE + CODE ... \n
         for (Entity entity : gameMap.getEntities()) {
             if (entity.getEntityType() == EntityType.ITEM) {
+                // fetching item save code
                 Item item = (Item) entity;
                 ItemType itemType = (ItemType) item.getSubType();
                 String code = itemType.getSaveConfig().code();
+
+                // fetching position
                 Position position = item.getPosition();
+
+                // saving in the used item save format
                 String saveFormat = String.format("%s(%d,%d)\n", code, position.getX(), position.getY());
                 textMapBuilder.append(saveFormat);
             }
@@ -177,11 +187,14 @@ public class ProgressFileManager {
         Map<ItemType, Integer> inventoryContent = new HashMap<>();
         String mapString;
 
+        // reads json objects from the file and builds a ProgressSave object
         try (Reader reader = Files.newBufferedReader(filePath)) {
             JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 
+            // current level
             level = jsonObject.get(LEVEL_KEY).getAsJsonObject().get(LEVEL_VALUE_KEY).getAsInt();
 
+            // inventory
             JsonObject inventoryObj = jsonObject.get(INVENTORY_KEY).getAsJsonObject();
             for (Map.Entry<String, JsonElement> entry : inventoryObj.entrySet()) {
                 JsonObject itemObj = entry.getValue().getAsJsonObject();
@@ -190,6 +203,7 @@ public class ProgressFileManager {
                 inventoryContent.put(itemType, amount);
             }
 
+            // map (includes items and initial player position)
             JsonObject mapObj = jsonObject.get(MAP_KEY).getAsJsonObject();
             mapString = mapObj.get(MAP_CONTENT_KEY).getAsString();
 
@@ -210,6 +224,7 @@ public class ProgressFileManager {
         Path filePath = getProgressFileUrl();
 
         try {
+            // removes file if exists (= reset)
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
             LOGGER.warning("Failed to delete progress file.");

@@ -35,6 +35,7 @@ public class Executor {
     public Executor(Stage stage) {
         this.stage = stage;
 
+        // initiating main window (via Screen class)
         screen = new Screen(stage, 1038, 612, "Frozen Alchemist", "/ui/game_icon.png");
         MapLoader.setAllowedMapDimensions(16, 9);
 
@@ -42,10 +43,14 @@ public class Executor {
     }
 
     private void loadLobby() {
+        // creates game lobby using the MenuView class
         MenuView lobby = new MenuView(screen.getWidth(), screen.getHeight(), "/ui/lobby_background.png");
+        
+        // binds controller functions to lobby buttons
         lobby.addButton("Play Game", this::loadGame);
         lobby.addButton("Reset Progress", this::resetProgress);
 
+        // sets scene to lobby
         Scene scene = new Scene(lobby);
         screen.setScene(scene);
 
@@ -53,24 +58,28 @@ public class Executor {
     }
 
     private void loadGame() {
+        // prepares game loop
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long l) {
-            RenderedTexture[] renderedTextures = getRenderedData(game.getEntities(), game.getMapWidth());
-            gameView.render(renderedTextures);
+                RenderedTexture[] renderedTextures = getRenderedData(game.getEntities(), game.getMapWidth());
+                gameView.render(renderedTextures);
             }
         };
 
+        // prepares controls and loads textures to TextureManager
         Controls controls = new Controls();
         TextureManager.load();
 
+        // creates game and passes controller functions for certain 'events'
         game = new Game(
             controls,
             this::loadEnd, // triggered when game is won
-            this::updateInventoryButtonOverlay,
+            this::emptyEquippedItemOverlay,
             this::getMenuData
         );
 
+        // initiates game scene
         gameView = new GameView(screen.getWidth(), screen.getHeight(), this::getMenuData);
         Scene gameScene = new Scene(gameView);
 
@@ -78,10 +87,12 @@ public class Executor {
         gameScene.setOnKeyPressed(e -> controls.keyPressed(e.getCode().toString()));
         gameScene.setOnKeyReleased(e -> controls.keyReleased(e.getCode().toString()));
 
-        // only perform if game is running (is not if game won is saved)
+        // only perform if game is running (it wouldn't run if last save is after game was won)
         if (game.isRunning()) {
             // bind saving progress
             stage.setOnCloseRequest(e -> game.save());
+            
+            // show game
             gameLoop.start();
             stage.setScene(gameScene);
         }
@@ -90,6 +101,7 @@ public class Executor {
     }
 
     private void loadEnd() {
+        // loads a game won scene using MenuView class
         MenuView endView = new MenuView(screen.getWidth(), screen.getHeight(), "/ui/game_won_background.png");
         Scene scene = new Scene(endView);
         stage.setScene(scene);
@@ -100,11 +112,14 @@ public class Executor {
     public RenderedTexture[] getRenderedData(Entity[] entities, int widthInTiles) {
         List<RenderedTexture> renderedTextures = new LinkedList<>();
 
+        // for every entity it calculates it's pixel position on the screen based off 
+        // it's game position and screen dimensions
         for (Entity entity : entities) {
+            // subtype matters because some object textures are supposed to be smaller than a tile 
             Object subtype = entity.getSubType();
             Texture texture = TextureManager.getTexture(subtype);
 
-            // calculating offset because some textures are too large
+            // calculating offsets to center the texture in the tile
             int tileSizeInPixels = screen.getWidth() / widthInTiles;
             Position position = entity.getPosition();
             double offset = texture.getScale() < 1f ?
@@ -120,23 +135,28 @@ public class Executor {
     }
 
     private void getMenuData() {
-        ArrayList<MenuItem> craftingData = new ArrayList<>();
         ArrayList<MenuItem> inventoryData = new ArrayList<>();
+        ArrayList<MenuItem> craftingData = new ArrayList<>();
 
+        // prepares MenuItem object for every item in player's inventory
         Inventory inventory = game.getPlayer().getInventory();
         Map<ItemType, Integer> inventoryItems = inventory.getContent();
         for (Map.Entry<ItemType, Integer> entry : inventoryItems.entrySet()) {
             ItemType itemType = entry.getKey();
             int amount = entry.getValue();
 
+            // fetches image of item via TextureManager
             Image image = TextureManager.getTexture(itemType).getImage();
 
             for (int i = 0; i < amount; i++) {
+                // binding functions to when player click's the item (he wants to equip it)
                 Runnable equipItem = () -> {
                     inventory.setEquippedItemType(itemType); // equip selected item
                     gameView.showMenus(false);
                     gameView.setButtonOverlayImage(image);
                 };
+
+                // controller function for when player click's the
                 Runnable onHintClick = () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription());
                 MenuItem slot = new MenuItem(image, equipItem, onHintClick);
 
@@ -144,6 +164,7 @@ public class Executor {
             }
         }
 
+        // creates MenuItem slots for items player can craft
         for (ItemType itemType : ItemType.values()) {
             Map<ItemType, Integer> recipe = itemType.getRecipe();
             if (recipe == null) continue; // non-craftable items
@@ -153,6 +174,8 @@ public class Executor {
 
             if (canCraft) {
                 Image image = TextureManager.getTexture(itemType).getImage();
+
+                // bindings events for when player click's the item (he wants to craft it)
                 Runnable craftItem = () -> {
                     inventory.craft(itemType);
 
@@ -160,23 +183,27 @@ public class Executor {
                     if (inventory.getEquippedItemType() == null) gameView.setButtonOverlayImage(null);
                     getMenuData();
                 };
-                Runnable showItemInfo = () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription());
 
+                Runnable showItemInfo = () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription());
                 MenuItem slot = new MenuItem(image, craftItem, showItemInfo);
+
                 craftingData.add(slot);
             }
         }
 
+        // creating MenuData object for the view
         MenuData menuData = new MenuData(
             inventoryData.toArray(new MenuItem[0]),
             craftingData.toArray(new MenuItem[0])
         );
 
+        // updating view with these data
         gameView.setMenuData(menuData);
         gameView.updateMenus();
     }
 
-    private void updateInventoryButtonOverlay() {
+    private void emptyEquippedItemOverlay() {
+        // removes equipped item overlay
         gameView.setButtonOverlayImage(null);
     }
 
@@ -184,6 +211,8 @@ public class Executor {
         LOGGER.info("Triggering progress reset.");
 
         ProgressFileManager.resetProgress();
+
+        // alert player using GameAlert
         GameAlert gameAlert = new GameAlert(stage.getScene(), Alert.AlertType.CONFIRMATION);
         gameAlert.setTitle("Progress Reset");
         gameAlert.setHeaderText(null);

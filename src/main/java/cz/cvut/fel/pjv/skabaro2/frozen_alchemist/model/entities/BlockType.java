@@ -15,7 +15,7 @@ public enum BlockType implements Savable {
     RubbleBlock(new SaveConfig("R", "rubble.png")),
     Water(new SaveConfig("W", "water.png"));
 
-    private final SaveConfig saveConfig; // The save configuration associated with the block type.
+    private final SaveConfig saveConfig;
 
     /**
      * Constructs a BlockType enum with the specified save configuration.
@@ -38,6 +38,7 @@ public enum BlockType implements Savable {
      * @return The corresponding BlockType, or null if no match is found.
      */
     public static BlockType fromSaveCode(String saveCode) {
+        // returns BlockType based on the save code
         for (BlockType blockType : BlockType.values()) {
             if (blockType.getSaveConfig().code().equals(saveCode)) return blockType;
         }

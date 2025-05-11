@@ -24,6 +24,8 @@ public class MenuView extends View {
         super(width, height);
 
         getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/menu_scene.css")).toExternalForm());
+
+        // setup ui
         setupBackground(backgroundImagePath);
         setupButtonBox();
     }
@@ -35,6 +37,7 @@ public class MenuView extends View {
      * @throws RuntimeException If the background image cannot be found at the specified path.
      */
     private void setupBackground(String backgroundImagePath) {
+        // loads background from resources
         InputStream backgroundImageStream = MenuView.class.getResourceAsStream(backgroundImagePath);
         if (backgroundImageStream == null) throw new RuntimeException("Background image not found at path: " + backgroundImagePath);
         Image background = new Image(backgroundImageStream);
@@ -46,10 +49,12 @@ public class MenuView extends View {
      * The box is centered horizontally and positioned near the bottom of the window.
      */
     private void setupButtonBox() {
+        // setups layout of buttons
         buttonBox = new VBox(15);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPrefWidth(250);
 
+        // horizontal centering + vertical 2/3 cca
         buttonBox.setLayoutX((width - buttonBox.getPrefWidth()) / 2);
         buttonBox.setLayoutY(height - 250);
 

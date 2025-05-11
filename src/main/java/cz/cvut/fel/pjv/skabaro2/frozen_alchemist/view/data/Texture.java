@@ -22,6 +22,7 @@ public class Texture {
      * @throws IllegalArgumentException If the resource cannot be found at the specified path.
      */
     public Texture(String relativePath, float scale) {
+        // fetches Image from resources based on the passed path
         InputStream resourceStream = TextureManager.class.getResourceAsStream("/textures/" + relativePath);
         if (resourceStream == null) throw new IllegalArgumentException("Resource not found: " + relativePath);
 

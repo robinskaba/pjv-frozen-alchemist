@@ -33,6 +33,7 @@ public class FrozenAlchemist extends Application {
      * @param args Command-line arguments passed to the application.
      */
     public static void main(String[] args) {
+        // activate/deactivate logger
         if (args.length > 0) {
             setUpLogger(args[0]);
         } else {
@@ -82,6 +83,8 @@ public class FrozenAlchemist extends Application {
                 System.out.println("Logger level is WARNING");
                 break;
         }
+
+        // set logger
         LogManager.getLogManager().reset();
         LOGGER.setLevel(logLvl);
         ConsoleHandler handler = new ConsoleHandler();

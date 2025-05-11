@@ -43,7 +43,10 @@ public class GameView extends View {
         super(width, height);
         getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/game_scene.css")).toExternalForm());
 
+        // saves event for fetching menu data from controller
         this.fetchMenuData = fetchMenuData;
+
+        // setups ui
         setupInventoryButton();
         setupInventoryAndCraftingMenu();
         showMenus(false);
@@ -55,8 +58,10 @@ public class GameView extends View {
      * @param renderedTextures An array of RenderedTexture objects to be drawn.
      */
     public void render(RenderedTexture[] renderedTextures) {
+        // clear gc
         gc.clearRect(0, 0, width, height);
 
+        // fill gc with images from rendered textures
         for (RenderedTexture renderedTexture : renderedTextures) {
             Texture texture = renderedTexture.texture();
             PixelPosition pixelPosition = renderedTexture.pixelPosition();
@@ -72,6 +77,7 @@ public class GameView extends View {
     private void setupInventoryButton() {
         double size = 100;
 
+        // get inventory button ui
         InputStream inputStream = getClass().getResourceAsStream("/ui/action_button.png");
         if (inputStream == null) {
             LOGGER.warning("Failed to load action button image.");
@@ -81,6 +87,7 @@ public class GameView extends View {
 
         ImageView buttonImageView = new ImageView(defaultImage);
 
+        // main button ui settings
         mainMenuButton = new Button();
         mainMenuButton.getStyleClass().add("main-button");
         mainMenuButton.setGraphic(buttonImageView);
@@ -92,15 +99,16 @@ public class GameView extends View {
 
         double overlayImageSizeRatio = 0.75;
 
+        // overlay settings
         mainMenuButtonOverlayImage = new ImageView();
         mainMenuButtonOverlayImage.setFitWidth(size * overlayImageSizeRatio);
         mainMenuButtonOverlayImage.setFitHeight(size * overlayImageSizeRatio);
         mainMenuButtonOverlayImage.setVisible(false);
-
+        // centering overlay
         mainMenuButtonOverlayImage.setLayoutX(mainMenuButton.getLayoutX() + size * (1 - overlayImageSizeRatio) / 2);
         mainMenuButtonOverlayImage.setLayoutY(mainMenuButton.getLayoutY() + size * (1 - overlayImageSizeRatio) / 2);
-
-        mainMenuButtonOverlayImage.setMouseTransparent(true); // !! prevents blocking mouse input to the button
+        // !! prevents blocking mouse input to the button
+        mainMenuButtonOverlayImage.setMouseTransparent(true);
 
         // binds showing menus to button click
         mainMenuButton.setOnAction(e -> showMenus(true));
@@ -133,15 +141,19 @@ public class GameView extends View {
 
         Region background = createMenuRegion(height - 100);
 
+        // menu title label
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("menu-title");
 
+        // menu grid
         itemGrid.getStyleClass().add("menu-grid");
         itemGrid.setAlignment(Pos.TOP_LEFT);
 
+        // putting it in a vbox layout
         VBox layout = new VBox(10, titleLabel, itemGrid);
         layout.setLayoutY(100);
         layout.setAlignment(Pos.TOP_CENTER);
+
         panel.getChildren().addAll(background, layout);
 
         return panel;
@@ -158,15 +170,19 @@ public class GameView extends View {
         StackPane pane = new StackPane();
         pane.setMaxSize(menuWidth, panelHeight);
 
+        // using same background region
         Region background = createMenuRegion(panelHeight);
 
+        // using vbox layout for item info panel
         VBox layout = new VBox();
         layout.setAlignment(Pos.TOP_LEFT);
         layout.setPadding(new Insets(10, 15, 10, 15));
 
+        // item title
         itemTitle = new Label();
         itemTitle.getStyleClass().add("item-title");
 
+        // item description
         itemDescription = new Label();
         itemDescription.setMaxWidth(width);
         itemDescription.getStyleClass().add("item-description");
@@ -183,10 +199,12 @@ public class GameView extends View {
     private void setupInventoryAndCraftingMenu() {
         double topPosition = 25;
 
+        // setups component menus
         StackPane inventoryPanel = createMenuPanel("Inventory", inventoryGridPane);
         StackPane craftingPanel = createMenuPanel("Crafting", craftingGridPane);
         itemInfoPanel = createItemInfoPanel();
 
+        // putting them next to each other
         menus = new HBox();
         menus.setAlignment(Pos.TOP_CENTER);
         menus.setSpacing(25);
@@ -201,8 +219,11 @@ public class GameView extends View {
 
             Node target = (Node) event.getTarget(); // conversion to base JavaFX UI component
             while (target != null) {
+                // return (don't hide) if target was one of the menus
                 if (target == inventoryPanel || target == craftingPanel || target == itemInfoPanel) return;
-                target = target.getParent(); // try ancestor
+
+                // try ancestor
+                target = target.getParent();
             }
 
             // if loop passes, then click was outside all menus
@@ -218,6 +239,7 @@ public class GameView extends View {
      * @param image The image to set as the overlay.
      */
     public void setButtonOverlayImage(Image image) {
+        // sets buttons overlay image
         mainMenuButtonOverlayImage.setImage(image);
         mainMenuButtonOverlayImage.setVisible(true);
     }
@@ -233,6 +255,8 @@ public class GameView extends View {
         menus.setVisible(show);
 
         if (mainMenuButtonOverlayImage.getImage() != null) mainMenuButtonOverlayImage.setVisible(!show);
+
+        // update menus with current data on show
         if (show) {
             fetchMenuData.run();
             updateMenus();
@@ -260,31 +284,34 @@ public class GameView extends View {
     private void updateMenu(MenuItem[] items, GridPane menuGrid) {
         int i = 0;
 
+        // getting hint icon from resources
         Image hintIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/ui/hint.png")));
 
+        // puts each menu item in the grid
         for (MenuItem menuItem : items) {
+            // fetching functions
             Image itemImage = menuItem.image();
             Runnable onItemClick = menuItem.onItemClick();
             Runnable onHintClick = menuItem.onHintClick();
 
             ImageView itemImageView = new ImageView(itemImage);
 
-            // Limiting image size.
+            // limiting image size
             itemImageView.setPreserveRatio(true);
             itemImageView.setFitWidth((double) menuWidth / 5);
             itemImageView.setFitHeight((double) menuWidth / 5);
 
+            // building item slot
             Button itemSlot = new Button();
             itemSlot.getStyleClass().add("menu-item");
             itemSlot.setGraphic(itemImageView);
             itemSlot.setOnAction(event -> onItemClick.run());
 
+            // setting up hint button
             ImageView hintImageView = new ImageView(hintIcon);
-
             hintImageView.setPreserveRatio(true);
             hintImageView.setFitWidth((double) menuWidth / 15);
             hintImageView.setFitHeight((double) menuWidth / 15);
-
             Button hintButton = new Button();
             hintButton.setGraphic(hintImageView);
             hintButton.setPadding(new Insets(0));
@@ -293,6 +320,7 @@ public class GameView extends View {
             // show item info on hint button click
             hintButton.setOnAction(e -> onHintClick.run());
 
+            // putting it in the top right corner
             StackPane slot = new StackPane();
             slot.setAlignment(Pos.TOP_RIGHT);
 
@@ -309,9 +337,11 @@ public class GameView extends View {
      * Updates the inventory and crafting menus with the current menu data.
      */
     public void updateMenus() {
+        // clears old menu items
         craftingGridPane.getChildren().clear();
         inventoryGridPane.getChildren().clear();
 
+        // loads new menu items
         updateMenu(menuData.craftingData(), craftingGridPane);
         updateMenu(menuData.inventoryData(), inventoryGridPane);
 

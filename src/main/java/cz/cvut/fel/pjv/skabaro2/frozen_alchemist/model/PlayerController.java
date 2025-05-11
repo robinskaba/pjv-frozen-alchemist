@@ -84,8 +84,10 @@ public class PlayerController {
     public void movePlayer(Direction direction) {
         LOGGER.finest("Moving player in direction: " + direction);
 
+        // player will face the direction regardless if he can move in that direction
         player.setDirection(direction);
 
+        // calculating new position based on the received direction
         Position currentPosition = player.getPosition();
         Position newPosition = new Position(currentPosition.getX(), currentPosition.getY());
         switch (direction) {
@@ -98,9 +100,11 @@ public class PlayerController {
         // check if the new position is within the map bounds
         if (!gameMap.isPositionInMap(newPosition)) return;
 
+        // fetching block on position
         Block blockOnPosition = gameMap.getBlockOnPosition(newPosition);
         if (blockOnPosition == null) throw new RuntimeException("No block on position " + newPosition);
 
+        // finding out if he can move to that block
         BlockType blockTypeOnPosition = (BlockType) blockOnPosition.getSubType();
         switch (blockTypeOnPosition) {
             case BlockType.MeltableWallBlock, BlockType.RubbleBlock, BlockType.WallBlock, BlockType.Water -> {
@@ -121,9 +125,12 @@ public class PlayerController {
         Item itemOnPosition = gameMap.getItemOnPosition(newPosition);
         if (itemOnPosition != null) {
             LOGGER.fine("Picked up item: " + itemOnPosition.getSubType());
+
+            // add item to inventory and remove it from map
             player.getInventory().add((ItemType) itemOnPosition.getSubType());
             gameMap.remove(itemOnPosition);
 
+            // execute function bound to picking up items
             onItemPickup.run();
         }
     }
@@ -148,7 +155,7 @@ public class PlayerController {
             default -> throw new IllegalStateException("Unexpected value: " + player.getSubType());
         }
 
-        // Use the equipped item based on its type.
+        // use the equipped item based on its type
         Supplier<Boolean> use = switch (equippedItemType) {
             case ItemType.PotionOfLevitation -> () -> ItemFunctions.grantLevitation(player);
             case ItemType.PotionOfFrost -> () -> ItemFunctions.freezeWater(gameMap, facingPosition);
@@ -160,8 +167,11 @@ public class PlayerController {
         // apply the item's effect and remove it from the inventory if used successfully (return of true)
         if (use != null && use.get()) {
             LOGGER.info("Using " + equippedItemType);
+
+            // removing item from inventory
             player.getInventory().remove(equippedItemType, 1);
 
+            // execute function bound to using items
             onItemUse.run();
         }
     }

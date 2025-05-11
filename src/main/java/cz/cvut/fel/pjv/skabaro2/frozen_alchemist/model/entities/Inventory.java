@@ -21,9 +21,11 @@ public class Inventory {
         int newAmount = currentAmount - amount;
 
         if (newAmount == 0) {
+            // removing item from inventory all together
             content.remove(itemType);
             if (itemType == equippedItemType) equippedItemType = null;
         } else {
+            // updating amount
             content.put(itemType, newAmount);
         }
 

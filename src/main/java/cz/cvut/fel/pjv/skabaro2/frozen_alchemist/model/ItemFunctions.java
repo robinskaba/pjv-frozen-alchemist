@@ -35,8 +35,11 @@ public class ItemFunctions {
      */
     public static boolean meltIce(GameMap gameMap, Position position) {
         Block blockOnPosition = gameMap.getBlockOnPosition(position);
+
+        // block on position must be a meltable ice
         if (blockOnPosition.getSubType() != BlockType.MeltableWallBlock) return false;
 
+        // update game map
         gameMap.remove(blockOnPosition);
         gameMap.add(new Block(BlockType.FloorBlock, position));
 
@@ -54,8 +57,11 @@ public class ItemFunctions {
      */
     public static boolean freezeWater(GameMap gameMap, Position position) {
         Block blockOnPosition = gameMap.getBlockOnPosition(position);
+
+        // block on position must be water
         if (blockOnPosition.getSubType() != BlockType.Water) return false;
 
+        // update game map
         gameMap.remove(blockOnPosition);
         gameMap.add(new Block(BlockType.FloorBlock, position));
 
@@ -73,8 +79,11 @@ public class ItemFunctions {
      */
     public static boolean pulverizeRubble(GameMap gameMap, Position position) {
         Block blockOnPosition = gameMap.getBlockOnPosition(position);
+
+        // block on position must be rubble
         if (blockOnPosition.getSubType() != BlockType.RubbleBlock) return false;
 
+        // update game map
         gameMap.remove(blockOnPosition);
         gameMap.add(new Block(BlockType.FloorBlock, position));
 

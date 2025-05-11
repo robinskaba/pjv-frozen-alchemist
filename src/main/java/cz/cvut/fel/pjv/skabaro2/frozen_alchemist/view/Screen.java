@@ -33,6 +33,7 @@ public class Screen {
         this.width = width;
         this.height = height;
 
+        // base window settings
         this.stage.setTitle(gameName);
         this.stage.setResizable(false);
         this.stage.setWidth(width);

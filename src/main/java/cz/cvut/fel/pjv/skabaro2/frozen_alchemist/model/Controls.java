@@ -22,7 +22,7 @@ public class Controls {
      * @param key The key that was pressed.
      */
     public void keyPressed(String key) {
-        if (currentlyActiveKeys.containsKey(key)) return; // prevent holding down the key.
+        if (currentlyActiveKeys.containsKey(key)) return; // prevent holding down the key
         currentlyActiveKeys.put(key, true);
         handleKey(key);
     }
@@ -45,7 +45,7 @@ public class Controls {
      * @param runnable The function to be executed when the key is pressed.
      */
     public void bindFunction(String key, Runnable runnable) {
-        if (boundFunctions.containsKey(key)) return; // prevent multiple functions for one key.
+        if (boundFunctions.containsKey(key)) return; // prevent multiple functions for one key
         boundFunctions.put(key, runnable);
 
         LOGGER.finer(String.format("Function bound to key: %s", key));
@@ -57,8 +57,8 @@ public class Controls {
      * @param key The key to handle.
      */
     private void handleKey(String key) {
-        Runnable func = boundFunctions.get(key);
-        if (func != null) func.run();
+        Runnable func = boundFunctions.get(key); // get function bound to this key
+        if (func != null) func.run(); // run function if it exists
 
         LOGGER.finest(String.format("Handling function bound to key: %s", key));
     }

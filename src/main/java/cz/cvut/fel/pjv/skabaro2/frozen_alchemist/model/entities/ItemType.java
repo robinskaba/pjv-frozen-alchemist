@@ -145,6 +145,7 @@ public enum ItemType implements Savable, Storable {
      * @return The corresponding ItemType, or null if no match is found.
      */
     public static ItemType fromSaveCode(String saveCode) {
+        // find itemType based on the save code
         for (ItemType itemType : ItemType.values()) {
             if (itemType.getSaveConfig().code().equals(saveCode)) return itemType;
         }

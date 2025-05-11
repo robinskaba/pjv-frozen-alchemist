@@ -9,6 +9,7 @@ import java.util.EnumMap;
 import java.util.logging.Logger;
 
 public class TextureManager {
+    // main texture keeping structures
     private static final EnumMap<BlockType, Texture> blockTextures = new EnumMap<>(BlockType.class);
     private static final EnumMap<ItemType, Texture> itemTextures = new EnumMap<>(ItemType.class);
     private static final EnumMap<Direction, Texture> playerOrientedTextures = new EnumMap<>(Direction.class);
@@ -16,16 +17,19 @@ public class TextureManager {
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public static void load() {
+        // load all textures for blocks
         for (BlockType blockType : BlockType.values()) {
             Texture texture = new Texture(blockType.getSaveConfig().relativePath(), 1f);
             blockTextures.put(blockType, texture);
         }
 
+        // load all textures for items
         for (ItemType itemType : ItemType.values()) {
             Texture texture = new Texture(itemType.getSaveConfig().relativePath(), 0.6f);
             itemTextures.put(itemType, texture);
         }
 
+        // bind directional textures to player orientation
         float playerSpriteScale = 0.7f;
         playerOrientedTextures.put(Direction.UP, new Texture("player_up.png", playerSpriteScale));
         playerOrientedTextures.put(Direction.DOWN, new Texture("player_down.png", playerSpriteScale));
@@ -36,11 +40,14 @@ public class TextureManager {
     }
 
     public static Texture getTexture(Object subtype) {
+        // returns texture based on the passed entity's subtype
         if (subtype instanceof BlockType) return blockTextures.get(subtype);
         if (subtype instanceof ItemType) return itemTextures.get(subtype);
         if (subtype instanceof Direction) return playerOrientedTextures.get(subtype);
 
         LOGGER.warning("Unknown subtype when loading texture: " + subtype);
+
+        // no texture loaded for this subtype
         return new Texture("missing_texture.png", 1f);
     }
 }

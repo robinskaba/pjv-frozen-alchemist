@@ -43,6 +43,7 @@ public class Game {
         this.onItemUse = onItemUse;
         this.onItemPickup = onItemPickup;
 
+        // checking that passed arguments must not be null
         if(controls == null || onGameEnd == null || onItemUse == null || onItemPickup == null) {
             LOGGER.warning("Game initialized without controls or a callback.");
         }
@@ -55,6 +56,7 @@ public class Game {
             LOGGER.info("Game used a progress save.");
         }
 
+        // initiating actual game
         setupPlayerController();
         loadNextLevel();
 
@@ -74,7 +76,10 @@ public class Game {
      */
     private void loadNextLevel() {
         currentLevel++;
+
+        // stops game if current level exceeds the amount of existing levels
         if (currentLevel > MapLoader.getAmountOfLevels()) {
+
             isRunning = false;
             onGameEnd.run();
             return;
@@ -83,8 +88,10 @@ public class Game {
         // load the level data based on progress or the current level
         LevelData levelData;
         if (progressSave != null && progressSave.level() == currentLevel) {
+            // loading level from save (map might look different)
             levelData = MapLoader.getLevelData(progressSave.levelTextRepresentation());
         } else {
+            // loading level based on current level
             levelData = MapLoader.getLevelData(currentLevel);
         }
 
@@ -92,6 +99,7 @@ public class Game {
         gameMap = new GameMap(levelData.mapWidth(), levelData.mapHeight(), levelData.blocks(), levelData.items());
         player.setPosition(levelData.initialPlayerPosition());
 
+        // player controller needs to know he is working with a different map
         playerController.updateGameMap(gameMap);
 
         LOGGER.info(String.format("Level %d loaded into game.", currentLevel));
@@ -104,8 +112,11 @@ public class Game {
      */
     public Entity[] getEntities() {
         if (gameMap == null) return null;
+
+        // puts together all game entities
         List<Entity> entities = gameMap.getEntities();
         entities.add(player);
+
         return entities.toArray(new Entity[0]);
     }
 

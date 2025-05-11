@@ -43,6 +43,7 @@ public class MapLoader {
     private static int allowedMapHeight = -1;
 
     public static void setAllowedMapDimensions(int width, int height) {
+        // sets allowed dimensions (all levels must fit these settings)
         allowedMapWidth = width;
         allowedMapHeight = height;
 
@@ -58,7 +59,7 @@ public class MapLoader {
         Path levelsPath;
 
         try {
-            // get the path to the levels directory in resources.
+            // get the path to the levels directory in resources
             URL levelsUrl = MapLoader.class.getResource(LEVELS);
             if (levelsUrl == null) return 0; // avoid NullPointerException if the directory is not found
             levelsPath = Paths.get(levelsUrl.toURI());
@@ -102,12 +103,15 @@ public class MapLoader {
      * @return A LevelData object containing the blocks, items, and initial player position.
      */
     private static LevelData buildLevelData(String textRepresentation) {
-        if (allowedMapWidth == -1 || allowedMapHeight == -1)
+        // checks that allowed dimensions are set
+        if (allowedMapWidth == -1 || allowedMapHeight == -1) {
             throw new IllegalMapLoaderState("Map Loader requires allowed map width and height to be set before loading levels.");
+        }
 
         // replace all line endings with '\n' for consistency across CRLF and LF (caused issues)
         textRepresentation = textRepresentation.replace("\r\n", "\n");
 
+        // fetches map structure, items and player's initial position from the text
         MapStructure structure = getStructure(textRepresentation);
         Item[] items = getItems(textRepresentation);
         Position initial = getInitialPlayerPosition(textRepresentation);
@@ -130,8 +134,10 @@ public class MapLoader {
         LOGGER.finer("Reading level " + level + " as string from file.");
 
         try {
+            // find level in resources
             URL resource = MapLoader.class.getResource("/levels/level" + level + ".txt");
             if (resource == null) throw new RuntimeException("Level file not found: /levels/level" + level + ".txt");
+
             return Files.readString(Path.of(resource.toURI()));
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException("Failed to read file for level " + level, e);
@@ -146,7 +152,7 @@ public class MapLoader {
      */
     private static MapStructure getStructure(String textRepresentation) {
         ArrayList<Block> blocks = new ArrayList<>();
-        int i = 0;
+        int i = 0; // for counting chars
         int x = 0, y = 0; // for specifying block's position
         int width = -1;
 
@@ -163,6 +169,7 @@ public class MapLoader {
                         blocks.size(), width, y
                     ));
 
+                    // returning map structure object
                     return new MapStructure(
                         width,
                         y,
@@ -180,9 +187,11 @@ public class MapLoader {
                 }
                 case ' ': break;
                 default: {
+                    // code is valid -> creating block from the code
                     Position position = new Position(x, y);
                     BlockType blockType = BlockType.fromSaveCode(String.valueOf(code));
                     Block block = new Block(blockType, position);
+
                     blocks.add(block);
                     x++;
                 }
@@ -200,7 +209,7 @@ public class MapLoader {
      */
     private static Item[] getItems(String textRepresentation) {
         ArrayList<Item> items = new ArrayList<>();
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(); // for reading longer codes
         String name = null;
         int x = -1;
         int y = -1;
@@ -210,12 +219,13 @@ public class MapLoader {
             char readChar = textRepresentation.charAt(i);
 
             switch (readChar) {
-                case '%': return items.toArray(new Item[0]); // end of item declaration
+                case '%': return items.toArray(new Item[0]); // end of item declaration, returning fetched items
                 case '\n': {
                     // finished reading an item, create a new item
                     if (name == null || x == -1 || y == -1) throw new RuntimeException("Error reading name/x/y of entity.");
                     if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Items can not be placed outside of the map.");
 
+                    // new line -> fetching new item from the gathered data
                     ItemType itemType = ItemType.fromSaveCode(name);
                     Position position = new Position(x, y);
                     Item newItem = new Item(itemType, position);
@@ -229,16 +239,19 @@ public class MapLoader {
                     break;
                 }
                 case '(': {
+                    // fetching name from the buffer
                     name = buffer.toString();
                     buffer.delete(0, buffer.length());
                     break;
                 }
                 case ',': {
+                    // fetching x position from the buffer
                     x = Integer.parseInt(buffer.toString());
                     buffer.delete(0, buffer.length());
                     break;
                 }
                 case ')': {
+                    // fetching y position from the buffer
                     y = Integer.parseInt(buffer.toString());
                     buffer.delete(0, buffer.length());
                     break;
@@ -269,6 +282,9 @@ public class MapLoader {
 
             switch (readChar) {
                 case '\n': {
+                    // new line -> end of player's position declaration
+
+                    // getting y position
                     try {
                         y = Integer.parseInt(buffer.toString());
                     } catch (NumberFormatException e) {
@@ -276,6 +292,7 @@ public class MapLoader {
                     }
                     buffer.delete(0, buffer.length());
 
+                    // x position should have already been parsed
                     if (x == -1) throw new RuntimeException("Error reading player initial x-position declaration.");
                     if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Player can not be positioned outside of the map.");
 
@@ -284,9 +301,11 @@ public class MapLoader {
                         new Position(x, y)
                     ));
 
+                    // returning position
                     return new Position(x, y);
                 }
                 case ',': {
+                    // parsing x-position from the buffer
                     x = Integer.parseInt(buffer.toString());
                     buffer.delete(0, buffer.length());
                     break;
