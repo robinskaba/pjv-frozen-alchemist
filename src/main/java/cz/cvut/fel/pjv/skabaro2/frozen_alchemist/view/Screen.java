@@ -8,7 +8,8 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 /**
- * Represents the main screen of the game, managing the stage, title, icon, and fonts loaded.
+ * Handles the main game screen, including the stage setup, title, icon, and font loading.
+ * Provides methods to configure and display the game window.
  */
 public class Screen {
     private final Stage stage;
@@ -16,18 +17,21 @@ public class Screen {
     private final int height;
 
     /**
-     * Constructs a new Screen instance.
+     * Initializes a new Screen instance with the specified stage, dimensions, title, and icon.
+     * Configures the base settings for the game window and loads required fonts.
      *
      * @param stage                 The JavaFX Stage to be used for the game window.
+     * @param width                 The width of the game window in pixels.
+     * @param height                The height of the game window in pixels.
      * @param gameName              The title of the game to be displayed on the window.
      * @param gameIconRelativePath  The relative path to the game's icon image.
      */
     public Screen(
-        Stage stage,
-        int width,
-        int height,
-        String gameName,
-        String gameIconRelativePath
+            Stage stage,
+            int width,
+            int height,
+            String gameName,
+            String gameIconRelativePath
     ) {
         this.stage = stage;
         this.width = width;
@@ -47,7 +51,7 @@ public class Screen {
     }
 
     /**
-     * Sets the scene for the stage.
+     * Sets the scene to be displayed on the stage.
      *
      * @param scene The JavaFX Scene to be displayed on the stage.
      */
@@ -64,10 +68,20 @@ public class Screen {
         Font.loadFont(getClass().getResourceAsStream("/fonts/minecraft.ttf"), 12);
     }
 
+    /**
+     * Retrieves the width of the game window.
+     *
+     * @return The width of the game window in pixels.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Retrieves the height of the game window.
+     *
+     * @return The height of the game window in pixels.
+     */
     public int getHeight() {
         return height;
     }

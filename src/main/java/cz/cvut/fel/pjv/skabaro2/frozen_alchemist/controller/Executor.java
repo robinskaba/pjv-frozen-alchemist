@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * The Executor class serves as the main controller for the game. It manages the game lifecycle,
+ * including loading the lobby, game, and end scenes, as well as handling rendering and user interactions.
+ */
 public class Executor {
     private final Stage stage;
     private final Screen screen;
@@ -32,6 +36,11 @@ public class Executor {
 
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+    /**
+     * Constructor for the Executor class.
+     *
+     * @param stage The primary stage for the application.
+     */
     public Executor(Stage stage) {
         this.stage = stage;
 
@@ -42,10 +51,13 @@ public class Executor {
         loadLobby();
     }
 
+    /**
+     * Loads the game lobby scene.
+     */
     private void loadLobby() {
         // creates game lobby using the MenuView class
         MenuView lobby = new MenuView(screen.getWidth(), screen.getHeight(), "/ui/lobby_background.png");
-        
+
         // binds controller functions to lobby buttons
         lobby.addButton("Play Game", this::loadGame);
         lobby.addButton("Reset Progress", this::resetProgress);
@@ -57,6 +69,9 @@ public class Executor {
         LOGGER.info("Loaded lobby.");
     }
 
+    /**
+     * Loads the main game scene and initializes the game loop.
+     */
     private void loadGame() {
         // prepares game loop
         AnimationTimer gameLoop = new AnimationTimer() {
@@ -73,10 +88,10 @@ public class Executor {
 
         // creates game and passes controller functions for certain 'events'
         game = new Game(
-            controls,
-            this::loadEnd, // triggered when game is won
-            this::emptyEquippedItemOverlay,
-            this::getMenuData
+                controls,
+                this::loadEnd, // triggered when game is won
+                this::emptyEquippedItemOverlay,
+                this::getMenuData
         );
 
         // initiates game scene
@@ -91,7 +106,7 @@ public class Executor {
         if (game.isRunning()) {
             // bind saving progress
             stage.setOnCloseRequest(e -> game.save());
-            
+
             // show game
             gameLoop.start();
             stage.setScene(gameScene);
@@ -100,6 +115,9 @@ public class Executor {
         LOGGER.info("Loaded game.");
     }
 
+    /**
+     * Loads the end scene, which is displayed when the game is won.
+     */
     private void loadEnd() {
         // loads a game won scene using MenuView class
         MenuView endView = new MenuView(screen.getWidth(), screen.getHeight(), "/ui/game_won_background.png");
@@ -109,13 +127,20 @@ public class Executor {
         LOGGER.info("Loaded end.");
     }
 
+    /**
+     * Retrieves the rendered data for all entities in the game.
+     *
+     * @param entities     The array of entities to render.
+     * @param widthInTiles The width of the map in tiles.
+     * @return An array of RenderedTexture objects representing the rendered entities.
+     */
     public RenderedTexture[] getRenderedData(Entity[] entities, int widthInTiles) {
         List<RenderedTexture> renderedTextures = new LinkedList<>();
 
-        // for every entity it calculates it's pixel position on the screen based off 
+        // for every entity it calculates it's pixel position on the screen based off
         // it's game position and screen dimensions
         for (Entity entity : entities) {
-            // subtype matters because some object textures are supposed to be smaller than a tile 
+            // subtype matters because some object textures are supposed to be smaller than a tile
             Object subtype = entity.getSubType();
             Texture texture = TextureManager.getTexture(subtype);
 
@@ -134,6 +159,9 @@ public class Executor {
         return renderedTextures.toArray(new RenderedTexture[0]);
     }
 
+    /**
+     * Updates the menu data for the game view, including inventory and crafting items.
+     */
     private void getMenuData() {
         ArrayList<MenuItem> inventoryData = new ArrayList<>();
         ArrayList<MenuItem> craftingData = new ArrayList<>();
@@ -193,8 +221,8 @@ public class Executor {
 
         // creating MenuData object for the view
         MenuData menuData = new MenuData(
-            inventoryData.toArray(new MenuItem[0]),
-            craftingData.toArray(new MenuItem[0])
+                inventoryData.toArray(new MenuItem[0]),
+                craftingData.toArray(new MenuItem[0])
         );
 
         // updating view with these data
@@ -202,11 +230,17 @@ public class Executor {
         gameView.updateMenus();
     }
 
+    /**
+     * Removes the equipped item overlay from the game view.
+     */
     private void emptyEquippedItemOverlay() {
         // removes equipped item overlay
         gameView.setButtonOverlayImage(null);
     }
 
+    /**
+     * Resets the player's progress and displays a confirmation alert.
+     */
     private void resetProgress() {
         LOGGER.info("Triggering progress reset.");
 

@@ -20,10 +20,14 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
- * Class for loading game levels from text files.
- * Responsible for creating entities (blocks, items, etc.) based on the level's text representation.
+ * Utility class for loading and parsing game levels from text files.
+ * Handles the creation of game entities (blocks, items, etc.) and ensures
+ * the level structure adheres to predefined constraints.
  */
 public class MapLoader {
+    /**
+     * Represents the structure of the map, including its dimensions and blocks.
+     */
     static class MapStructure {
         private final int width;
         private final int height;
@@ -42,6 +46,13 @@ public class MapLoader {
     private static int allowedMapWidth = -1;
     private static int allowedMapHeight = -1;
 
+    /**
+     * Configures the allowed dimensions for all game levels.
+     * Levels exceeding these dimensions will be considered invalid.
+     *
+     * @param width  The maximum allowed width of the map.
+     * @param height The maximum allowed height of the map.
+     */
     public static void setAllowedMapDimensions(int width, int height) {
         // sets allowed dimensions (all levels must fit these settings)
         allowedMapWidth = width;
@@ -51,9 +62,9 @@ public class MapLoader {
     }
 
     /**
-     * Counts the total number of levels available in the levels directory.
+     * Determines the total number of level files available in the levels directory.
      *
-     * @return The number of level files in the levels directory.
+     * @return The count of level files found in the levels directory.
      */
     public static int getAmountOfLevels() {
         Path levelsPath;
@@ -76,20 +87,20 @@ public class MapLoader {
     }
 
     /**
-     * Retrieves the level data based on its text representation.
+     * Parses the level data from its text representation.
      *
-     * @param textRepresentation The text representation of the level.
-     * @return A LevelData object containing the blocks, items, and initial player position.
+     * @param textRepresentation The textual representation of the level.
+     * @return A LevelData object containing the parsed blocks, items, and player position.
      */
     public static LevelData getLevelData(String textRepresentation) {
         return buildLevelData(textRepresentation);
     }
 
     /**
-     * Retrieves the level data for a specific level number.
+     * Loads and parses the level data for a specific level number.
      *
      * @param level The level number to load.
-     * @return A LevelData object containing the blocks, items, and initial player position.
+     * @return A LevelData object containing the parsed blocks, items, and player position.
      */
     public static LevelData getLevelData(int level) {
         String textRepresentation = readLevelAsString(level);
@@ -97,10 +108,10 @@ public class MapLoader {
     }
 
     /**
-     * Builds the LevelData object from the text representation of the level.
+     * Constructs a LevelData object from the provided text representation of the level.
      *
-     * @param textRepresentation The text representation of the level.
-     * @return A LevelData object containing the blocks, items, and initial player position.
+     * @param textRepresentation The textual representation of the level.
+     * @return A LevelData object containing the parsed blocks, items, and player position.
      */
     private static LevelData buildLevelData(String textRepresentation) {
         // checks that allowed dimensions are set
@@ -117,8 +128,8 @@ public class MapLoader {
         Position initial = getInitialPlayerPosition(textRepresentation);
 
         LOGGER.info(String.format(
-            "Loaded level with dimensions: %dx%d, initial player position: %s, number of blocks: %d, number of items: %d.",
-            structure.width, structure.height, initial, structure.blocks.length, items.length
+                "Loaded level with dimensions: %dx%d, initial player position: %s, number of blocks: %d, number of items: %d.",
+                structure.width, structure.height, initial, structure.blocks.length, items.length
         ));
 
         return new LevelData(structure.width, structure.height, structure.blocks, items, initial);
@@ -128,7 +139,7 @@ public class MapLoader {
      * Reads the text representation of a level from a file.
      *
      * @param level The level number to read.
-     * @return The text representation of the level.
+     * @return The textual representation of the level.
      */
     private static String readLevelAsString(int level) {
         LOGGER.finer("Reading level " + level + " as string from file.");
@@ -145,10 +156,10 @@ public class MapLoader {
     }
 
     /**
-     * Parses the blocks from the text representation of the level.
+     * Extracts the map structure (blocks and dimensions) from the text representation.
      *
-     * @param textRepresentation The text representation of the level.
-     * @return An array of Block objects.
+     * @param textRepresentation The textual representation of the level.
+     * @return A MapStructure object containing the blocks and map dimensions.
      */
     private static MapStructure getStructure(String textRepresentation) {
         ArrayList<Block> blocks = new ArrayList<>();
@@ -165,15 +176,15 @@ public class MapLoader {
                     if (width != allowedMapWidth || y != allowedMapHeight) throw new IllegalLevelStructure("Level dimensions do not equal set values.");
 
                     LOGGER.finest(String.format(
-                        "Parsed blocks: %d, width: %d, height: %d.",
-                        blocks.size(), width, y
+                            "Parsed blocks: %d, width: %d, height: %d.",
+                            blocks.size(), width, y
                     ));
 
                     // returning map structure object
                     return new MapStructure(
-                        width,
-                        y,
-                        blocks.toArray(new Block[0])
+                            width,
+                            y,
+                            blocks.toArray(new Block[0])
                     );
                 }
                 case '\n': {
@@ -202,10 +213,10 @@ public class MapLoader {
     }
 
     /**
-     * Parses the items from the text representation of the level.
+     * Extracts the items from the text representation of the level.
      *
-     * @param textRepresentation The text representation of the level.
-     * @return An array of Item objects.
+     * @param textRepresentation The textual representation of the level.
+     * @return An array of Item objects parsed from the text.
      */
     private static Item[] getItems(String textRepresentation) {
         ArrayList<Item> items = new ArrayList<>();
@@ -266,9 +277,9 @@ public class MapLoader {
     }
 
     /**
-     * Retrieves the initial player position from the text representation of the level.
+     * Extracts the initial player position from the text representation of the level.
      *
-     * @param textRepresentation The text representation of the level.
+     * @param textRepresentation The textual representation of the level.
      * @return The initial Position of the player.
      */
     private static Position getInitialPlayerPosition(String textRepresentation) {
@@ -297,8 +308,8 @@ public class MapLoader {
                     if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Player can not be positioned outside of the map.");
 
                     LOGGER.finest(String.format(
-                        "Parsed initial player position: %s.",
-                        new Position(x, y)
+                            "Parsed initial player position: %s.",
+                            new Position(x, y)
                     ));
 
                     // returning position
