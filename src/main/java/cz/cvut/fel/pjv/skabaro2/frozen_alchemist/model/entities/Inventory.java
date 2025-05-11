@@ -50,4 +50,29 @@ public class Inventory {
         int currentAmount = content.getOrDefault(itemType, 0);
         return currentAmount >= amount;
     }
+
+    public void craft(ItemType itemType) {
+        // use up items in inventory
+        for (Map.Entry<ItemType, Integer> component : itemType.getRecipe().entrySet()) {
+            remove(component.getKey(), component.getValue());
+        }
+
+        // add crafted item to inventory
+        add(itemType);
+
+        LOGGER.info("Crafted " + itemType.getName() + ".");
+    }
+
+    public boolean canCraft(ItemType itemType) {
+        // calculating if he can afford the item
+        for (Map.Entry<ItemType, Integer> component : itemType.getRecipe().entrySet()) {
+            ItemType componentType = component.getKey();
+            int amount = component.getValue();
+            if (!has(componentType, amount)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

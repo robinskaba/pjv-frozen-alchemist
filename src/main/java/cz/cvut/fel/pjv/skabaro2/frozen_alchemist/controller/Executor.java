@@ -12,7 +12,6 @@ import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.data.*;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views.GameView;
 import cz.cvut.fel.pjv.skabaro2.frozen_alchemist.view.views.MenuView;
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -154,32 +153,16 @@ public class Executor {
             if (recipe == null) continue; // non-craftable items
 
             // calculating if he can afford the item
-            boolean hasAll = true;
-            for (Map.Entry<ItemType, Integer> component : recipe.entrySet()) {
-                ItemType componentType = component.getKey();
-                int amount = component.getValue();
-                if (!inventory.has(componentType, amount)) {
-                    hasAll = false;
-                    break;
-                }
-            }
+            boolean canCraft = inventory.canCraft(itemType);
 
-            if (hasAll) {
+            if (canCraft) {
                 Image image = TextureManager.getTexture(itemType).getImage();
                 Runnable craftItem = () -> {
-                    // use up items in inventory
-                    for (Map.Entry<ItemType, Integer> component : recipe.entrySet()) {
-                        inventory.remove(component.getKey(), component.getValue());
-                    }
-
-                    // add crafted item to inventory
-                    inventory.add(itemType);
-                    if (inventory.getEquippedItemType() == null) gameView.setButtonOverlayImage(null);
+                    inventory.craft(itemType);
 
                     // refresh ui
+                    if (inventory.getEquippedItemType() == null) gameView.setButtonOverlayImage(null);
                     getMenuData();
-
-                    LOGGER.info("Crafted " + itemType.getName() + ".");
                 };
                 Runnable showItemInfo = () -> gameView.showItemInfo(itemType.getName(), itemType.getDescription());
 
