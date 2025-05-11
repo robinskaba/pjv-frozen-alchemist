@@ -28,6 +28,12 @@ public class ProgressFileManager {
     private final static String INVENTORY_KEY = "inventory";
     private final static String MAP_KEY = "map";
 
+    private final static String ITEM_OBJ_CODE_KEY = "itemCode";
+    private final static String ITEM_OBJ_AMOUNT_KEY = "amount";
+
+    private final static String MAP_CONTENT_KEY = "text";
+    private final static String LEVEL_VALUE_KEY = "value";
+
     /**
      * Retrieves the path to the progress file.
      *
@@ -77,7 +83,7 @@ public class ProgressFileManager {
      */
     private static JsonObject buildLevelSave(int level) {
         JsonObject levelObj = new JsonObject();
-        levelObj.addProperty("value", level);
+        levelObj.addProperty(LEVEL_VALUE_KEY, level);
         return levelObj;
     }
 
@@ -95,8 +101,8 @@ public class ProgressFileManager {
             Integer amount = item.getValue();
 
             JsonObject itemObj = new JsonObject();
-            itemObj.addProperty("itemCode", itemType.getSaveConfig().code());
-            itemObj.addProperty("amount", amount);
+            itemObj.addProperty(ITEM_OBJ_CODE_KEY, itemType.getSaveConfig().code());
+            itemObj.addProperty(ITEM_OBJ_AMOUNT_KEY, amount);
 
             inventoryObj.add(String.valueOf(i), itemObj);
             i++;
@@ -149,7 +155,7 @@ public class ProgressFileManager {
 
         // build map JSON
         JsonObject mapObj = new JsonObject();
-        mapObj.addProperty("text", textMapBuilder.toString());
+        mapObj.addProperty(MAP_CONTENT_KEY, textMapBuilder.toString());
 
         LOGGER.finest("Map save built.");
         return mapObj;
@@ -174,18 +180,18 @@ public class ProgressFileManager {
         try (Reader reader = Files.newBufferedReader(filePath)) {
             JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
 
-            level = jsonObject.get(LEVEL_KEY).getAsJsonObject().get("value").getAsInt();
+            level = jsonObject.get(LEVEL_KEY).getAsJsonObject().get(LEVEL_VALUE_KEY).getAsInt();
 
             JsonObject inventoryObj = jsonObject.get(INVENTORY_KEY).getAsJsonObject();
             for (Map.Entry<String, JsonElement> entry : inventoryObj.entrySet()) {
                 JsonObject itemObj = entry.getValue().getAsJsonObject();
-                ItemType itemType = ItemType.fromSaveCode(itemObj.get("itemCode").getAsString());
-                int amount = itemObj.get("amount").getAsInt();
+                ItemType itemType = ItemType.fromSaveCode(itemObj.get(ITEM_OBJ_CODE_KEY).getAsString());
+                int amount = itemObj.get(ITEM_OBJ_AMOUNT_KEY).getAsInt();
                 inventoryContent.put(itemType, amount);
             }
 
             JsonObject mapObj = jsonObject.get(MAP_KEY).getAsJsonObject();
-            mapString = mapObj.get("text").getAsString();
+            mapString = mapObj.get(MAP_CONTENT_KEY).getAsString();
 
         } catch (IOException e) {
             LOGGER.warning("Failed to load progress from a file.");
