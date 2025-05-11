@@ -17,12 +17,12 @@ public class TextureManager {
 
     public static void load() {
         for (BlockType blockType : BlockType.values()) {
-            Texture texture = new Texture(blockType.getSaveConfig().getRelativePath(), 1f);
+            Texture texture = new Texture(blockType.getSaveConfig().relativePath(), 1f);
             blockTextures.put(blockType, texture);
         }
 
         for (ItemType itemType : ItemType.values()) {
-            Texture texture = new Texture(itemType.getSaveConfig().getRelativePath(), 0.6f);
+            Texture texture = new Texture(itemType.getSaveConfig().relativePath(), 0.6f);
             itemTextures.put(itemType, texture);
         }
 

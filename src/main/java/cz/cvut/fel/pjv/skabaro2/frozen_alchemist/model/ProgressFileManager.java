@@ -95,7 +95,7 @@ public class ProgressFileManager {
             Integer amount = item.getValue();
 
             JsonObject itemObj = new JsonObject();
-            itemObj.addProperty("itemCode", itemType.getSaveConfig().getCode());
+            itemObj.addProperty("itemCode", itemType.getSaveConfig().code());
             itemObj.addProperty("amount", amount);
 
             inventoryObj.add(String.valueOf(i), itemObj);
@@ -121,7 +121,7 @@ public class ProgressFileManager {
             for (int x = 0; x < gameMap.getWidth(); x++) {
                 Block block = gameMap.getBlockOnPosition(new Position(x, y));
                 BlockType blockType = (BlockType) block.getSubType();
-                String code = blockType.getSaveConfig().getCode();
+                String code = blockType.getSaveConfig().code();
                 textMapBuilder.append(String.format("%s ", code));
             }
             textMapBuilder.deleteCharAt(textMapBuilder.length() - 1); // remove last space.
@@ -134,7 +134,7 @@ public class ProgressFileManager {
             if (entity.getEntityType() == EntityType.ITEM) {
                 Item item = (Item) entity;
                 ItemType itemType = (ItemType) item.getSubType();
-                String code = itemType.getSaveConfig().getCode();
+                String code = itemType.getSaveConfig().code();
                 Position position = item.getPosition();
                 String saveFormat = String.format("%s(%d,%d)\n", code, position.getX(), position.getY());
                 textMapBuilder.append(saveFormat);

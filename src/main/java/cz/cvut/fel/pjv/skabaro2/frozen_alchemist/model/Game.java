@@ -49,8 +49,8 @@ public class Game {
 
         // load progress if available and initialize the game state
         if (progressSave != null) {
-            currentLevel = progressSave.getLevel() - 1;
-            player.getInventory().setContent(progressSave.getInventoryContent());
+            currentLevel = progressSave.level() - 1;
+            player.getInventory().setContent(progressSave.inventoryContent());
 
             LOGGER.info("Game used a progress save.");
         }
@@ -82,8 +82,8 @@ public class Game {
 
         // load the level data based on progress or the current level
         LevelData levelData;
-        if (progressSave != null && progressSave.getLevel() == currentLevel) {
-            levelData = MapLoader.getLevelData(progressSave.getLevelTextRepresentation());
+        if (progressSave != null && progressSave.level() == currentLevel) {
+            levelData = MapLoader.getLevelData(progressSave.levelTextRepresentation());
         } else {
             levelData = MapLoader.getLevelData(currentLevel);
         }

@@ -146,7 +146,7 @@ public enum ItemType implements Savable, Storable {
      */
     public static ItemType fromSaveCode(String saveCode) {
         for (ItemType itemType : ItemType.values()) {
-            if (itemType.getSaveConfig().getCode().equals(saveCode)) return itemType;
+            if (itemType.getSaveConfig().code().equals(saveCode)) return itemType;
         }
         throw new UnknownSaveCode(saveCode, EntityType.ITEM);
     }

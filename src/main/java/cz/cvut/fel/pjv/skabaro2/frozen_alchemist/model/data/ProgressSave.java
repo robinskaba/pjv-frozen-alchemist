@@ -10,34 +10,15 @@ import java.util.Map;
  * It is used when Game is initiated, it gets this ProgressSave and loads the initial level,
  * inventory and the level using its text representation.
  */
-public class ProgressSave {
-    private final int level;
-    private final Map<ItemType, Integer> inventoryContent;
-    private final String levelTextRepresentation;
-
+public record ProgressSave(int level, Map<ItemType, Integer> inventoryContent, String levelTextRepresentation) {
     /**
      * Constructs a new ProgressSave object.
      *
-     * @param level The current level of the game.
-     * @param inventoryContent A map representing the player's inventory content,
-     *                         where the key is the item type and the value is the amount.
+     * @param level                   The current level of the game.
+     * @param inventoryContent        A map representing the player's inventory content,
+     *                                where the key is the item type and the value is the amount.
      * @param levelTextRepresentation A text representation of the current level.
      */
-    public ProgressSave(int level, Map<ItemType, Integer> inventoryContent, String levelTextRepresentation) {
-        this.level = level;
-        this.inventoryContent = inventoryContent;
-        this.levelTextRepresentation = levelTextRepresentation;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public Map<ItemType, Integer> getInventoryContent() {
-        return inventoryContent;
-    }
-
-    public String getLevelTextRepresentation() {
-        return levelTextRepresentation;
+    public ProgressSave {
     }
 }

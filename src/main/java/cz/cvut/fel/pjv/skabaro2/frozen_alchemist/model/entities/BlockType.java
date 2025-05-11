@@ -39,7 +39,7 @@ public enum BlockType implements Savable {
      */
     public static BlockType fromSaveCode(String saveCode) {
         for (BlockType blockType : BlockType.values()) {
-            if (blockType.getSaveConfig().getCode().equals(saveCode)) return blockType;
+            if (blockType.getSaveConfig().code().equals(saveCode)) return blockType;
         }
         throw new UnknownSaveCode(saveCode, EntityType.BLOCK);
     }
