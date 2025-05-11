@@ -75,12 +75,8 @@ public class Executor {
         Scene gameScene = new Scene(gameView);
 
         // bind registering keystrokes
-        gameScene.setOnKeyPressed(e -> {
-            controls.keyPressed(e.getCode().toString());
-        });
-        gameScene.setOnKeyReleased(e -> {
-            controls.keyReleased(e.getCode().toString());
-        });
+        gameScene.setOnKeyPressed(e -> controls.keyPressed(e.getCode().toString()));
+        gameScene.setOnKeyReleased(e -> controls.keyReleased(e.getCode().toString()));
 
         // only perform if game is running (is not if game won is saved)
         if (game.isRunning()) {

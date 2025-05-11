@@ -261,7 +261,7 @@ public class MapLoader {
     private static Position getInitialPlayerPosition(String textRepresentation) {
         StringBuilder buffer = new StringBuilder();
         int x = -1;
-        int y = -1;
+        int y;
 
         int i = textRepresentation.lastIndexOf("%") + 2;
         while (true) {
@@ -269,10 +269,14 @@ public class MapLoader {
 
             switch (readChar) {
                 case '\n': {
-                    y = Integer.parseInt(buffer.toString());
+                    try {
+                        y = Integer.parseInt(buffer.toString());
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("Error reading player initial y-position declaration.");
+                    }
                     buffer.delete(0, buffer.length());
 
-                    if (x == -1 || y == -1) throw new RuntimeException("Error reading player initial position declaration.");
+                    if (x == -1) throw new RuntimeException("Error reading player initial x-position declaration.");
                     if (x < 0 || x >= allowedMapWidth || y < 0 || y >= allowedMapHeight) throw new IllegalLevelStructure("Player can not be positioned outside of the map.");
 
                     LOGGER.finest(String.format(
